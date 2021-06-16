@@ -1,0 +1,29 @@
+{
+  "name": "smart-crawler",
+  "version": "1.0.0",
+  "productName": "Crawler",
+  "description": "Crawl the net",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobeyfox/smart-crawler.git"
+  },
+  "author": {
+    "name": "Tobias Reimann",
+    "email": "info@tobias-reimann.com",
+    "url": "https://www.tobias-reimann.com"
+  },
+  "devDependencies": {
+    "electron": "^11.4.2"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "fs-jetpack": "^4.1.0",
+    "set-cookie-parser": "^2.4.8"
+  }
+}
