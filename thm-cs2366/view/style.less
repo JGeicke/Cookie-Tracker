@@ -1,0 +1,29 @@
+body, html {
+    --foreground: #434141;
+    --background: #f3f3f3;
+    --background2: #dfdfe3;
+    --hilite1: rgba(255,255,255,0.3);
+    --accent: #007abc;
+    --hr: #cccccc;
+    @media (prefers-color-scheme: dark) {
+        --foreground: #dfdfdf;
+        --background: #303030;
+        --background2: #464544;
+        --hilite1: rgba(0,0,0,0.2);
+        --hr: #434141;
+    }
+    color: var(--foreground);
+    background-color: var(--background);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    user-select: none;
+    margin: 0;
+    overflow: hidden;
+
+    h1 {
+        font-weight: 300;
+    }
+
+    a {
+        color: var(--accent);
+    }
+}
