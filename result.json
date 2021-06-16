@@ -1,0 +1,24 @@
+{
+    "start": "2021-04-30T14:48:00.000Z",
+    "end": "2021-04-30T14:59:00.000Z",
+    "urls": [
+        "https://www.thm.de/startseite.html",
+        "https://www.thm.de/startseite.css"
+    ],
+    "urls_done": [
+
+    ],
+    "results": {
+        "thm.de" : {
+            "persistentCookies": {
+                "PHPSESSID": "1234"
+            },
+            "sessionCookies": {
+                "HXJHJKFHJKF": "1234"
+            },
+            "trackingCookies": {
+                "notATrackingCookie": "1234"
+            }
+        }
+    } 
+}
