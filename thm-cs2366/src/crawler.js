@@ -4,12 +4,17 @@ const cookieParser = require('set-cookie-parser');
 /** Class used to implement the crawlers functionality.*/
 class SmartCrawlerClass
 {
+  /** minimum external links needed to continue*/
+  MIN_EXTERNALS = 1;
+
   /** current session */
   currentSession;
   /** If the crawler should interrupt the crawling */
   abort = false;
   /**If the crawler is running */
   isRunning = false;
+  /** Domain of the site currently analyzed by the crawler */
+  currentDomain = null;
 
   /**
    * Create a crawler.
@@ -31,18 +36,7 @@ class SmartCrawlerClass
         end: '',
         urls: [url],
         urls_done: [],
-        domain: null,
-        results: {
-          externalFonts : [],
-          externalImages: [],
-          externalScripts: [],
-          externalStyles: [],
-          externalFrames: [],
-          externalLinks : [],
-          initialCookies: {},
-          imprintLinks: [],
-          privacyLinks: []
-        }
+        results: {}
       };
     } catch(err){
       console.log('Not a url');
@@ -61,16 +55,17 @@ class SmartCrawlerClass
     let session;
     try{
       session = JSON.parse(result);
-      if(url && !session.urls_done.includes(url) && !session.urls.includes(url) && this.isSubSite(url)){
+      if(url && !session.urls_done.includes(url) && !session.urls.includes(url)){
         session.urls.push(url);
       } else {
-        console.log('no url defined or already done.');
+        console.log('no url defined or already visited.');
       }
 
       // check parsed session
       if(this.checkParsedSession(session)){
         return session;
       }
+      // abort later if session is undefined
       return undefined;
     } catch(err){
       console.error(err);
@@ -79,6 +74,7 @@ class SmartCrawlerClass
         session = this.createSession(url);
         return session;
       }
+      // abort later if session is undefined
       return undefined;
     }
   }
@@ -98,8 +94,8 @@ class SmartCrawlerClass
    * @returns if the session matches the needed structure
    */
   checkParsedSession(session){
-    let neededAttrs = ['start','end','urls','urls_done','domain'];
-    let neededResultAttrs = ['externalFonts','externalImages','externalScripts','externalStyles','externalFrames', 'externalLinks', 'initialCookies', 'imprintLinks', 'privacyLinks'];
+    let neededAttrs = ['start','end','urls','urls_done'];
+    let neededResultAttrs = ['persistentCookies','sessionCookies','trackingCookies'];
 
     // check needed outer attributes
     for(let i = 0; i<neededAttrs.length; i++){
@@ -113,10 +109,17 @@ class SmartCrawlerClass
       return false;
     }
 
-    // check needed result attributes
-    for(let i = 0; i<neededResultAttrs.length; i++){
-      if(res[neededResultAttrs[i]] === undefined){
-        return false;
+    // check needed result domain objects
+    let resultDomainObjects = res.keys();
+    for(let i = 0; i<resultDomainObjects.length; i++){
+      // get result domain object
+      let resultDomainObject = res[resultDomainObjects[i]];
+
+      // iterate needed attributes of result domain object
+      for(let k = 0; k<neededResultAttrs.length; k++){
+        if(resultDomainObject[neededResultAttrs[k]] === undefined){
+          return false;
+        }
       }
     }
     return true;
@@ -130,7 +133,7 @@ class SmartCrawlerClass
   isSubSite(url){
     try{
       let site = new URL(url);
-      if(site.hostname === this.currentSession.domain){
+      if(site.hostname === this.currentDomain){
         return true;
       }
       return false;
@@ -146,24 +149,28 @@ class SmartCrawlerClass
    * @returns result of the crawling in current session
    */
   async crawl(e, input){
+    // maximum number of redirects
     const maxRedirects = 5;
+    // internal urls of current domain
+    const internalURLs = [];
+    // current url
+    let url;
 
     this.isRunning = true;
     this.currentSession = input;
+
     console.log('.crawling');
-    while(input.urls.length > 0){
+    while(input.urls.length > 0 || internalURLs.length > 0){
       // check for abort
       if(this.abort){
         console.log('.abort');
         break;
       }
       // get next url
-      let url = input.urls.pop();
-
-
-      // check if url was already visited
-      if(input.urls_done.includes(url)){
-        continue;
+      if(input.urls.length >= this.MIN_EXTERNALS){
+        url = input.urls.pop();
+      } else {
+        url = internalURLs.pop();
       }
 
       //download
@@ -173,6 +180,9 @@ class SmartCrawlerClass
 
         //add url to visited
         input.urls_done.push(url);
+
+        // set current domain
+        this.currentDomain = new URL(url).hostname;
 
         // display urls in frontend
         e.sender.send('htmlReceived', JSON.stringify(input.urls_done, null, 2));
@@ -195,66 +205,47 @@ class SmartCrawlerClass
           continue;
         }
 
-        // Set hostname
-        if(input.domain === null){
-          input.domain = new URL(url).hostname;
-        }
-
         //parse
         console.log('..parsing');
         let parsedResult = await this.parse(download);
 
-        // add parsed urls for crawler
-        if(parsedResult.urls !== null){
-          parsedResult.urls.forEach((link)=>{
+        // add external links to result
+        if(parsedResult.externalLinks !== null){
+          parsedResult.externalLinks.forEach((link)=>{
             // check if url is already contained
             if(!input.urls.includes(link) && !input.urls_done.includes(link)){
               input.urls.push(link);
             }
           });
         }
-        // add parsed cookies to result
+
+        /* add parsed cookies to result
         if(parsedResult.cookies !== null){
           parsedResult.cookies.forEach(cookie => {
             input.results.initialCookies[cookie.name] = cookie.value;
           });
-        }
+        } */
 
-        // add external scripts to result
-        if(parsedResult.externalScripts !== null){
-          let concat = input.results.externalScripts.concat(parsedResult.externalScripts);
-          input.results.externalScripts = [...new Set(concat)];
+        console.log("external: "+input.urls.length);
+        console.log("internal: "+internalURLs.length);
+        // check if there are external links to follow
+        if(input.urls.length < this.MIN_EXTERNALS){
+          // add internal urls to analyze because no external urls were found
+          if(parsedResult.urls !== null){
+            parsedResult.urls.forEach((link)=>{
+              console.log("adding internal:" + link);
+              // check if url is already contained
+              if(!internalURLs.includes(link) && !input.urls_done.includes(link)){
+                internalURLs.push(link);
+              }
+            });
+          }
+        } else {
+          // clear internal urls and continue crawling to next domain
+          internalURLs.length = 0;
         }
-
-        // add external images to result
-        if(parsedResult.externalImages !== null){
-          let concat = input.results.externalImages.concat(parsedResult.externalImages);
-          input.results.externalImages = [...new Set(concat)];
-        }
-
-        // add external fonts to result
-        if(parsedResult.externalFonts !== null){
-          let concat = input.results.externalFonts.concat(parsedResult.externalFonts);
-          input.results.externalFonts = [...new Set(concat)];
-        }
-
-        // add external frames to result
-        if(parsedResult.externalFrames !== null){
-          let concat = input.results.externalFrames.concat(parsedResult.externalFrames);
-          input.results.externalFrames = [...new Set(concat)];
-        }
-
-         // add external links to result
-        if(parsedResult.externalLinks !== null){
-          let concat = input.results.externalLinks.concat(parsedResult.externalLinks);
-          input.results.externalLinks = [...new Set(concat)];
-        }
-
-        // add external styles to result
-        if(parsedResult.externalStyles !== null){
-          let concat = input.results.externalStyles.concat(parsedResult.externalStyles);
-          input.results.externalStyles = [...new Set(concat)];
-        }
+        console.log("external: "+input.urls.length);
+        console.log("internal: "+internalURLs.length);
       } catch(err){
         console.log(err);
       }
@@ -321,65 +312,13 @@ class SmartCrawlerClass
    * @returns array of links to external sites
    */
   parseLinks(body){
-    const srcRegex = /src="https?:\/\/[a-zA-Z0-9/?=:._-]*"/g;
     const hrefRegex = /href="https?:\/\/[a-zA-Z0-9/?=:._-]*"/g;
-    const urlRegex = /"https?:\/\/[a-zA-Z0-9/?=:._-]*"/g;
-
-    const scriptPrefix = /script /g;
-    const imgPrefix = /img /g;
-    const framePrefix = /frame /g;
-    const urlPrefix = /url\(/g;
 
     let internalUrls = [];
-    let externalScripts = [];
-    let externalImages = [];
-    let externalFrames = [];
     let externalLinks = [];
-    let externalStyles = [];
-    let externalFonts = [];
-
-    // scripts
-    let regex = new RegExp(scriptPrefix.source + srcRegex.source, 'g');
-    let regexRes = body.match(regex);
-
-    if(regexRes !== null){
-      let res = this.extractUrls(regexRes, 'script src=');
-      internalUrls = internalUrls.concat(res.internal);
-      externalScripts = res.external;
-    }
-
-    // images
-    regex = new RegExp(imgPrefix.source + srcRegex.source, 'g');
-    regexRes = body.match(regex);
-
-    if(regexRes !== null){
-      let res = this.extractUrls(regexRes, 'img src=');
-      internalUrls = internalUrls.concat(res.internal);
-      externalImages = res.external;
-    }
-
-    // frames
-    regex = new RegExp(framePrefix.source + srcRegex.source, 'g');
-    regexRes = body.match(regex);
-
-    if(regexRes !== null){
-      let res = this.extractUrls(regexRes, 'frame src=');
-      internalUrls = internalUrls.concat(res.internal);
-      externalFrames = res.external;
-    }
-
-    // fonts in styles
-    regex = new RegExp(urlPrefix.source + urlRegex.source, 'g');
-    regexRes = body.match(regex);
-
-    if(regexRes !== null){
-      let res = this.extractUrls(regexRes, 'url(');
-      internalUrls = internalUrls.concat(res.internal);
-      externalFonts = res.external;
-    }
 
     // href (styles, fonts & links)
-    regexRes = body.match(hrefRegex);
+    let regexRes = body.match(hrefRegex);
 
     if(regexRes !== null){
       let res = this.extractUrls(regexRes, 'href=');
@@ -387,11 +326,8 @@ class SmartCrawlerClass
       // categorize
       internalUrls = internalUrls.concat(res.internal);
       res.external.forEach((url)=>{
-        if(url.includes('font') || url.endsWith('.ttf') || url.endsWith('.otf')){
-          externalFonts.push(url);
-        }
-        else if(url.endsWith('.css')){
-          externalStyles.push(url);
+        if(url.includes('font') || url.endsWith('.ttf') || url.endsWith('.otf') || url.endsWith('.css')){
+          // do nothing
         } else {
           externalLinks.push(url);
         }
@@ -400,21 +336,11 @@ class SmartCrawlerClass
     
     // remove duplicates if present
     internalUrls = [...new Set(internalUrls)];
-    externalScripts = [...new Set(externalScripts)];
-    externalImages = [...new Set(externalImages)];
-    externalFrames = [...new Set(externalFrames)];
     externalLinks = [...new Set(externalLinks)];
-    externalStyles = [...new Set(externalStyles)];
-    externalFonts = [...new Set(externalFonts)];
 
     return {
       internalUrls: internalUrls,
-      externalScripts: externalScripts,
-      externalImages: externalImages,
-      externalFrames: externalFrames,
       externalLinks: externalLinks,
-      externalStyles: externalStyles,
-      externalFonts: externalFonts
     };
   }
 
@@ -431,12 +357,7 @@ class SmartCrawlerClass
         status: result.statusCode,
         header: result.headers,
         body: result.body,
-        externalScripts: ressources.externalScripts,
-        externalImages: ressources.externalImages,
-        externalFrames: ressources.externalFrames,
         externalLinks: ressources.externalLinks,
-        externalStyles: ressources.externalStyles,
-        externalFonts: ressources.externalFonts,
         urls: ressources.internalUrls,
         cookies: cookies,
       });
