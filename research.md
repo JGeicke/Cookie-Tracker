@@ -46,3 +46,8 @@ Aktuell wird über ```https.get``` die Seite abgeholt in der ```fetch()``` Metho
         req.end();
     ```
 - DNT kann so gesetzt werden oder auch nicht
+## Crawler Flowchart
+- Auf Fehlerbehandlung von `fetch()` und `parse()` verzichtet
+- Wurde bereits umgesetzt
+
+![Flowchart von crawl() im Crawler](flowchart.svg)
