@@ -17,7 +17,7 @@
 Aktuell wird über ```https.get``` die Seite abgeholt in der ```fetch()``` Methode
 
 - Verwenden von ```https.request``` (https://nodejs.org/api/https.html#https_https_request_url_options_callback)
-    - Es können dort zusäätzliche Optionen mitgegeben werden, unter Anderem auch für den Header (https://nodejs.dev/learn/making-http-requests-with-nodejs)
+    - Es können dort zusätzliche Optionen mitgegeben werden, unter Anderem auch für den Header (https://nodejs.dev/learn/making-http-requests-with-nodejs)
     
     ```javascript
         const https = require('https');
