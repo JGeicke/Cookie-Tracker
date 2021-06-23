@@ -2,7 +2,6 @@
 
 ## DNT Header
 
-- DNT Header ist deprecated (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/DNT)
 - DNT Header kann über JavaScript ausgelesen werden (Navigator.doNotTrack https://developer.mozilla.org/en-US/docs/Web/API/Navigator/doNotTrack)
     - DNT Header kann 3 Werte haben:
         - 0: Tracking ist erlaubt
@@ -10,6 +9,8 @@
         - null: Keine spezifische Präferenz
 - Wird dem Request Header mitgegeben
 - Unterstützt von folgenden Browser (https://www.geeksforgeeks.org/http-headers-dnt/): Google Chrome, Internet Explorer, Microsoft Edge, Firefox, Opera
+- DNT Header ist deprecated (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/DNT)
+    - "Global Privacy Control" Header? (https://globalprivacycontrol.github.io/gpc-spec/)
 
 ## User Agent & Custom Request
 
