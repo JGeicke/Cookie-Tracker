@@ -1,5 +1,6 @@
 const https = require('https');
 const cookieParser = require('set-cookie-parser');
+const { DomainResult } = require("./domainResult");
 
 /** Class used to implement the crawlers functionality.*/
 class SmartCrawlerClass
@@ -30,7 +31,7 @@ class SmartCrawlerClass
    */
   createSession(url){
     try{
-      let checkURL = new URL(url);
+      new URL(url);
       return {
         start: new Date(),
         end: '',
@@ -105,12 +106,13 @@ class SmartCrawlerClass
     }
     // check results
     let res = session['results'];
+    console.log(res);
     if(res === undefined){
       return false;
     }
 
     // check needed result domain objects
-    let resultDomainObjects = res.keys();
+    let resultDomainObjects = Object.keys(res);
     for(let i = 0; i<resultDomainObjects.length; i++){
       // get result domain object
       let resultDomainObject = res[resultDomainObjects[i]];
@@ -133,10 +135,8 @@ class SmartCrawlerClass
   isSubSite(url){
     try{
       let site = new URL(url);
-      if(site.hostname === this.currentDomain){
-        return true;
-      }
-      return false;
+      return site.hostname === this.currentDomain;
+
     } catch(err){
       return false;
     }
@@ -226,6 +226,8 @@ class SmartCrawlerClass
           });
         } */
 
+        DomainResult.createDomainResultObject(this.currentDomain, this.currentSession);
+
         console.log("external: "+input.urls.length);
         console.log("internal: "+internalURLs.length);
         // check if there are external links to follow
@@ -286,7 +288,7 @@ class SmartCrawlerClass
    * Extract urls from the tags & sort them.
    * @param {*} urls - tags & attributes with urls to be extracted
    * @param {*} attribute - base attribute used for slicing e.g. script src=
-   * @returns object with extraced internal & external urls.
+   * @returns object with extracted internal & external urls.
    */
   extractUrls(urls, attribute){
     let external = [];
@@ -350,15 +352,15 @@ class SmartCrawlerClass
    * @returns downloaded website and extracted privacy data of the website
    */
   async parse(result) {
-    let ressources = this.parseLinks(result.body);
+    let resources = this.parseLinks(result.body);
     let cookies = this.checkCookies(result.headers);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve({
         status: result.statusCode,
         header: result.headers,
         body: result.body,
-        externalLinks: ressources.externalLinks,
-        urls: ressources.internalUrls,
+        externalLinks: resources.externalLinks,
+        urls: resources.internalUrls,
         cookies: cookies,
       });
     });
@@ -377,7 +379,7 @@ class SmartCrawlerClass
         
         // Request unsuccessful
         if(res.statusCode !== 200){
-          if(res.statusCode == 301 || res.statusCode == 302){
+          if(res.statusCode === 301 || res.statusCode === 302){
             console.log(`....redirect to ${res.headers.location}`);
             resolve({
               status: res.statusCode,
