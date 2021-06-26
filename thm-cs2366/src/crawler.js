@@ -6,7 +6,7 @@ const { DomainResult } = require("./domainResult");
 class SmartCrawlerClass
 {
   /** minimum external links needed to continue*/
-  MIN_EXTERNALS = 1;
+  MIN_EXTERNALS = 2;
 
   /** current session */
   currentSession;
@@ -169,8 +169,15 @@ class SmartCrawlerClass
       // get next url
       if(input.urls.length >= this.MIN_EXTERNALS){
         url = input.urls.pop();
-      } else {
+      } else if(internalURLs.length > 0) {
         url = internalURLs.pop();
+      } else {
+        // no internal urls, but at least 1 external -> continue
+        url = input.urls.pop();
+        if(url === undefined){
+          console.log('.abort');
+          break;
+        }
       }
 
       //download
@@ -226,7 +233,7 @@ class SmartCrawlerClass
           });
         } */
 
-        DomainResult.createDomainResultObject(this.currentDomain, this.currentSession);
+        DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies, parsedResult.sessionCookies, parsedResult.trackingCookies);
 
         console.log("external: "+input.urls.length);
         console.log("internal: "+internalURLs.length);
@@ -268,10 +275,17 @@ class SmartCrawlerClass
    * @returns Array of with initial Cookies set by the website
    */
   checkCookies(headers){
+    // init result object
+    const result = {
+      persistentCookies: {},
+      sessionCookies: {},
+      trackingCookies: {}
+    }
+
     // return if no set-cookie header present
     let cookies = [];
     if (headers['set-cookie'] === undefined){
-      return cookies;
+      return result;
     }
     let cookieHeader = String(headers['set-cookie']);
     let cookieStrings = cookieParser.splitCookiesString(cookieHeader);
@@ -281,7 +295,17 @@ class SmartCrawlerClass
       let cookie = cookieParser.parseString(string, {decodeValues: true});
       cookies.push(cookie);
     });
-    return cookies;
+
+    // categorize cookies
+    cookies.forEach(cookie => {
+      // check "expires" of cookie & categorize them
+      if(cookie.expires !== undefined){
+        result.persistentCookies[cookie.name] = cookie;
+      } else {
+        result.sessionCookies[cookie.name] = cookie;
+      }
+    });
+    return result;
   }
 
   /**
@@ -361,7 +385,10 @@ class SmartCrawlerClass
         body: result.body,
         externalLinks: resources.externalLinks,
         urls: resources.internalUrls,
-        cookies: cookies,
+        persistentCookies: cookies.persistentCookies,
+        sessionCookies: cookies.sessionCookies,
+        trackingCookies: cookies.trackingCookies
+
       });
     });
   }
