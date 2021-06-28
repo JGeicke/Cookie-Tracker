@@ -147,18 +147,40 @@ class WelcomePage extends Component {
   /** render the html elements*/
   render() {
     return html`
-    <div style="margin-left: auto;margin-right:auto; margin-top:25px; margin-bottom:15px; width: 40%;">
-      <input type="text" placeholder="URL" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>
-      <button onClick=${this.clickButton}>Start</button>
-      <button onClick=${this.abortSession}>Stop</button>
-    </div>
-    <div style="width: 90%; margin: auto;">
-      <textarea style="resize: none; height: 300px; width:100%;" onInput=${this.onResInput} value=${this.state.html} readonly></textarea>
-    </div>
-    <div style="margin: auto; width: 20%;">
-      <button style="width: 30%; margin-right:5px; text-align: center;" onClick=${this.loadJsonResult}>Load</button>
-      <button style="width: 30%; text-align: center;" onClick=${this.saveJsonResult}>Save</button>
-    </div>
+      <div class="container-fluid">
+        <div class="row mb-3 mt-3">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm text-center">
+            <input type="text" placeholder="URL" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>
+          </div>
+          <div class="col-sm">
+            <div class="row">
+              <div class="col-sm text-center">
+                <button type="button" class="btn prim-btn shadow-none" onClick=${this.clickButton}>Start</button>
+              </div>
+              <div class="col-sm text-center">
+                <button type="button" class="btn prim-btn shadow-none" onClick=${this.abortSession}>Stop</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+            <textarea style="resize: none; height: 300px; width:100%;" onInput=${this.onResInput} value=${this.state.html} readonly></textarea>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-center"></div>
+          <div class="col-sm-2 text-center">
+            <button type="button" class="btn prim-btn shadow-none" onClick=${this.loadJsonResult}>Load</button>
+          </div>
+          <div class="col-sm-2 text-center">
+            <button type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>Save</button>
+          </div>
+          <div class="col-sm-4 text-center"></div>
+        </div>
+      </div>
     `;
   }
 }

@@ -26,7 +26,7 @@ class Main {
       resizable: false,
       fullscreenable: false,
       show: false,
-      backgroundColor: '#434141',
+      backgroundColor: '#0ae80a',
       icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
       webPreferences: {
           nodeIntegration: true,

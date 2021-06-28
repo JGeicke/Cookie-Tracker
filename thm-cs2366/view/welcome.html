@@ -2,10 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' cdn.jsdelivr.net;" />
         <title>Crawler</title>
         <link rel="stylesheet" type="text/css" href="style.css">
-        
+        <link href="../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script>
             const { ipcRenderer} = require('electron');
             const { dialog } = require('electron').remote;
@@ -16,5 +16,6 @@
 
     </head>
     <body>
+        <script src="../assets/bootstrap/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     </body>
 </html>

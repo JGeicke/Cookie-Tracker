@@ -1,7 +1,16 @@
-body, html {
+body, html, div {
     --foreground: #434141;
-    --background: #f3f3f3;
-    --background2: #dfdfe3;
+    --background: #6A7B76;
+    --background2: #3A4E48;
+
+    /* buttons */
+    --btn-background: #8B9D83;
+    --btn-border: #73866c;
+
+    @btn-hover-background: #6b7f64;
+    @btn-hover-border: #73866c;
+
+    --btn-text: #fff;
     --hilite1: rgba(255,255,255,0.3);
     --accent: #007abc;
     --hr: #cccccc;
@@ -25,5 +34,29 @@ body, html {
 
     a {
         color: var(--accent);
+    }
+
+    .prim-btn{
+        color: var(--btn-text);
+        background-color: var(--btn-background);
+        border-color: var(--btn-border);
+
+        &:hover{
+            color: var(--btn-text);
+            background-color: darken(@btn-hover-background, 2%);
+            border-color: darken(@btn-hover-border, 2%);
+        }
+
+        &:focus{
+            color: var(--btn-text);
+            background-color: darken(@btn-hover-background, 2%);
+            border-color: darken(@btn-hover-border, 2%);
+        }
+
+        &:active{
+            color: var(--btn-text);
+            background-color: darken(@btn-hover-background, 4%);
+            border-color: darken(@btn-hover-border, 4%);
+        }
     }
 }
