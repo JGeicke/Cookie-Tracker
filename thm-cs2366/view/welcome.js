@@ -17,6 +17,7 @@ class WelcomePage extends Component {
     this.onResInput = this.onResInput.bind(this);
     this.loadJsonResult = this.loadJsonResult.bind(this);
     this.saveJsonResult = this.saveJsonResult.bind(this);
+    this.settingsClicked = this.settingsClicked.bind(this);
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
   }
@@ -144,12 +145,21 @@ class WelcomePage extends Component {
     ipcRenderer.invoke('abortButtonClicked', this.state.input);
   }
 
+  /** Settings button handler*/
+  settingsClicked(){
+    ipcRenderer.invoke('settingsButtonClicked');
+  }
+
   /** render the html elements*/
   render() {
     return html`
       <div class="container-fluid">
         <div class="row mb-3 mt-3">
           <div class="col-sm">
+            <button type="button" class="btn prim-btn shadow-none" onClick=${this.settingsClicked}>
+              <!-- <img src="../assets/bootstrap/bootstrap-icons-1.5.0/gear-fill.svg"> -->
+              Settings
+            </button>
           </div>
           <div class="col-sm text-center">
             <input type="text" placeholder="URL" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>

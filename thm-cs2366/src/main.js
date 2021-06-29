@@ -5,6 +5,7 @@ const { SmartCrawler } = require('./crawler.js');
 
 /** Main class to initialize the window & control the flow of the application */
 class Main {
+
   constructor() {
     app.on('activate', this.onActivate.bind(this));
     app.on('ready', this.onReady.bind(this));
@@ -12,6 +13,7 @@ class Main {
 
     ipcMain.handle('buttonClicked', this.onButtonClicked);
     ipcMain.handle('abortButtonClicked', this.onAbortButtonClicked);
+    ipcMain.handle('settingsButtonClicked', this.onSettingsButtonClicked);
   }
 
   /**
@@ -26,7 +28,7 @@ class Main {
       resizable: false,
       fullscreenable: false,
       show: false,
-      backgroundColor: '#0ae80a',
+      backgroundColor: '#c4c6c4',
       icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
       webPreferences: {
           nodeIntegration: true,
@@ -105,6 +107,41 @@ class Main {
      */
     onAbortButtonClicked(e){
       SmartCrawler.abortSession();
+    }
+
+  /**
+   * Open new settings window
+   * @param {*} e - reference to event
+   */
+  onSettingsButtonClicked(e){
+      console.log('settings clicked');
+      let parent= BrowserWindow.getFocusedWindow();
+      // create new child window
+      const child = new BrowserWindow({
+        width: 400,
+        height: 460,
+        useContentSize: true,
+        minimizable: false,
+        resizable: false,
+        fullscreenable: false,
+        show: false,
+        autoHideMenuBar: true,
+        parent: parent,
+        icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
+        modal: true,
+        webPreferences: {
+          nodeIntegration: true,
+          enableRemoteModule: true,
+          contextIsolation: false
+        }
+      });
+      // load setting html
+      child.loadFile('view/settings.html');
+
+      // show if ready
+      child.once('ready-to-show', () => {
+        child.show()
+      });
     }
 }
 const main = new Main();
