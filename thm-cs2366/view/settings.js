@@ -12,7 +12,7 @@ class SettingsPage extends Component{
         <div class="container-fluid">
             <div>
                 <input type="radio" id="test" name="testradio" value="1" checked>
-                <label for="test">Test1</label>
+                <label for="test" > Test1</label>
             </div>
             <div>
                 <input type="radio" id="test2" name="testradio" value="2">
