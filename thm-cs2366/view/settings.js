@@ -10,13 +10,17 @@ class SettingsPage extends Component{
         // TODO wird fehlerhaft gerendert
         return html`
         <div class="container-fluid">
-            <div>
-                <input type="radio" id="test" name="testradio" value="1" checked>
-                <label for="test" > Test1</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Default radio
+                </label>
             </div>
-            <div>
-                <input type="radio" id="test2" name="testradio" value="2">
-                <label for="test2">Test2</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked />
+                <label class="form-check-label" for="flexRadioDefault2">
+                    Default checked radio
+                </label>
             </div>
         </div>
         `;
