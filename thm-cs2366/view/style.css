@@ -67,4 +67,6 @@ div .prim-btn:active {
   background-color: #61745b;
   border-color: #697b63;
 }
-/*# sourceMappingURL=style.css.map */
+.icon {
+  filter: invert(1);
+}

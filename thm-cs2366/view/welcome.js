@@ -157,8 +157,7 @@ class WelcomePage extends Component {
         <div class="row mb-3 mt-3">
           <div class="col-sm">
             <button type="button" class="btn prim-btn shadow-none" onClick=${this.settingsClicked}>
-              <!--<img style="color:white" src="../assets/bootstrap/bootstrap-icons-1.5.0/gear-fill.svg"/>-->
-              Settings
+              <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/gear-fill.svg"/>
             </button>
           </div>
           <div class="col-sm text-center">
