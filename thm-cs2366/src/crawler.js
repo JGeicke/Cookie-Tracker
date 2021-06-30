@@ -1,11 +1,12 @@
 const https = require('https');
 const cookieParser = require('set-cookie-parser');
+const { DomainResult } = require("./domainResult");
 
 /** Class used to implement the crawlers functionality.*/
 class SmartCrawlerClass
 {
   /** minimum external links needed to continue*/
-  MIN_EXTERNALS = 1;
+  MIN_EXTERNALS = 2;
 
   /** current session */
   currentSession;
@@ -30,7 +31,7 @@ class SmartCrawlerClass
    */
   createSession(url){
     try{
-      let checkURL = new URL(url);
+      new URL(url);
       return {
         start: new Date(),
         end: '',
@@ -105,12 +106,13 @@ class SmartCrawlerClass
     }
     // check results
     let res = session['results'];
+    console.log(res);
     if(res === undefined){
       return false;
     }
 
     // check needed result domain objects
-    let resultDomainObjects = res.keys();
+    let resultDomainObjects = Object.keys(res);
     for(let i = 0; i<resultDomainObjects.length; i++){
       // get result domain object
       let resultDomainObject = res[resultDomainObjects[i]];
@@ -133,10 +135,8 @@ class SmartCrawlerClass
   isSubSite(url){
     try{
       let site = new URL(url);
-      if(site.hostname === this.currentDomain){
-        return true;
-      }
-      return false;
+      return site.hostname === this.currentDomain;
+
     } catch(err){
       return false;
     }
@@ -169,8 +169,15 @@ class SmartCrawlerClass
       // get next url
       if(input.urls.length >= this.MIN_EXTERNALS){
         url = input.urls.pop();
-      } else {
+      } else if(internalURLs.length > 0) {
         url = internalURLs.pop();
+      } else {
+        // no internal urls, but at least 1 external -> continue
+        url = input.urls.pop();
+        if(url === undefined){
+          console.log('.abort');
+          break;
+        }
       }
 
       //download
@@ -226,6 +233,8 @@ class SmartCrawlerClass
           });
         } */
 
+        DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies, parsedResult.sessionCookies, parsedResult.trackingCookies);
+
         console.log("external: "+input.urls.length);
         console.log("internal: "+internalURLs.length);
         // check if there are external links to follow
@@ -266,10 +275,17 @@ class SmartCrawlerClass
    * @returns Array of with initial Cookies set by the website
    */
   checkCookies(headers){
+    // init result object
+    const result = {
+      persistentCookies: {},
+      sessionCookies: {},
+      trackingCookies: {}
+    }
+
     // return if no set-cookie header present
     let cookies = [];
     if (headers['set-cookie'] === undefined){
-      return cookies;
+      return result;
     }
     let cookieHeader = String(headers['set-cookie']);
     let cookieStrings = cookieParser.splitCookiesString(cookieHeader);
@@ -279,14 +295,24 @@ class SmartCrawlerClass
       let cookie = cookieParser.parseString(string, {decodeValues: true});
       cookies.push(cookie);
     });
-    return cookies;
+
+    // categorize cookies
+    cookies.forEach(cookie => {
+      // check "expires" of cookie & categorize them
+      if(cookie.expires !== undefined){
+        result.persistentCookies[cookie.name] = cookie;
+      } else {
+        result.sessionCookies[cookie.name] = cookie;
+      }
+    });
+    return result;
   }
 
   /**
    * Extract urls from the tags & sort them.
    * @param {*} urls - tags & attributes with urls to be extracted
    * @param {*} attribute - base attribute used for slicing e.g. script src=
-   * @returns object with extraced internal & external urls.
+   * @returns object with extracted internal & external urls.
    */
   extractUrls(urls, attribute){
     let external = [];
@@ -350,16 +376,19 @@ class SmartCrawlerClass
    * @returns downloaded website and extracted privacy data of the website
    */
   async parse(result) {
-    let ressources = this.parseLinks(result.body);
+    let resources = this.parseLinks(result.body);
     let cookies = this.checkCookies(result.headers);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve({
         status: result.statusCode,
         header: result.headers,
         body: result.body,
-        externalLinks: ressources.externalLinks,
-        urls: ressources.internalUrls,
-        cookies: cookies,
+        externalLinks: resources.externalLinks,
+        urls: resources.internalUrls,
+        persistentCookies: cookies.persistentCookies,
+        sessionCookies: cookies.sessionCookies,
+        trackingCookies: cookies.trackingCookies
+
       });
     });
   }
@@ -377,7 +406,7 @@ class SmartCrawlerClass
         
         // Request unsuccessful
         if(res.statusCode !== 200){
-          if(res.statusCode == 301 || res.statusCode == 302){
+          if(res.statusCode === 301 || res.statusCode === 302){
             console.log(`....redirect to ${res.headers.location}`);
             resolve({
               status: res.statusCode,

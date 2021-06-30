@@ -14,3 +14,7 @@ Alternativ dazu kann in das __URL__ Feld eine URL eingetragen werden. Diese wird
 Durch Klicken auf den __Start__ Button im oberen Bereich des Crawlers wird der Crawl-Vorgang gestartet. Während dem Crawl-Vorgang werden bereits untersuchte __URLs__ im mittleren Feld ausgegeben. Der Crawl-Vorgang lässt sich jederzeit mit einem Klick auf den __Stop__ Button unterbrechen, wodurch das Ergebnis im mittleren Feld ausgegeben wird. Der Vorgang kann erneut durch Klicken auf den __Start__ Button weitergeführt werden.
 
 Falls der Vorgang unterbrochen wird oder alle __URLs__ der Domäne erfolgreich untersucht wurden, wird im mittleren Feld das Ergebnis der Session ausgegeben. Dieses lässt sich durch Klicken auf den __Save__ Button im unteren Bereich des Crawlers in einer JSON-Datei speichern.
+
+## Bibliotheken
+- Bootstrap 5.02
+- Preact

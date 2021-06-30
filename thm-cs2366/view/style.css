@@ -1,8 +1,13 @@
 body,
-html {
+html,
+div {
   --foreground: #434141;
-  --background: #f3f3f3;
-  --background2: #dfdfe3;
+  --background: #6A7B76;
+  --background2: #3A4E48;
+  /* buttons */
+  --btn-background: #8B9D83;
+  --btn-border: #73866c;
+  --btn-text: #fff;
   --hilite1: rgba(255, 255, 255, 0.3);
   --accent: #007abc;
   --hr: #cccccc;
@@ -15,7 +20,8 @@ html {
 }
 @media (prefers-color-scheme: dark) {
   body,
-  html {
+  html,
+  div {
     --foreground: #dfdfdf;
     --background: #303030;
     --background2: #464544;
@@ -24,10 +30,41 @@ html {
   }
 }
 body h1,
-html h1 {
+html h1,
+div h1 {
   font-weight: 300;
 }
 body a,
-html a {
+html a,
+div a {
   color: var(--accent);
 }
+body .prim-btn,
+html .prim-btn,
+div .prim-btn {
+  color: var(--btn-text);
+  background-color: var(--btn-background);
+  border-color: var(--btn-border);
+}
+body .prim-btn:hover,
+html .prim-btn:hover,
+div .prim-btn:hover {
+  color: var(--btn-text);
+  background-color: #667960;
+  border-color: #6e8067;
+}
+body .prim-btn:focus,
+html .prim-btn:focus,
+div .prim-btn:focus {
+  color: var(--btn-text);
+  background-color: #667960;
+  border-color: #6e8067;
+}
+body .prim-btn:active,
+html .prim-btn:active,
+div .prim-btn:active {
+  color: var(--btn-text);
+  background-color: #61745b;
+  border-color: #697b63;
+}
+/*# sourceMappingURL=style.css.map */
