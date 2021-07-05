@@ -18,3 +18,6 @@ Falls der Vorgang unterbrochen wird oder alle __URLs__ der Domäne erfolgreich u
 ## Bibliotheken
 - Bootstrap 5.02
 - Preact
+- JQuery
+- PopperJS
+- Chart.js

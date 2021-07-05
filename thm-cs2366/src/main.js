@@ -95,7 +95,7 @@ class Main {
         session = await SmartCrawler.crawl(e, session);
 
         // display result in frontend
-        e.sender.send('htmlReceived', JSON.stringify(session, null, 2));
+        e.sender.send('resultReceived', session);
       }catch(err){
         console.error(err);
       }
