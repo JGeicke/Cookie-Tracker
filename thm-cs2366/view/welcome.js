@@ -50,6 +50,10 @@ class WelcomePage extends Component {
             <option value="all" selected>All domains</option>
             ${domainHTML}
           </select>
+          <button class="btn prim-btn shadow-none mt-4">
+            <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/info-circle-fill.svg"/>
+             Details
+          </button>
         </div>
         <div class="col-sm-8 align-self-center pb-2" style="min-height: 250px; max-height:300px;">
           <div style="width: 100%; height:80%">
@@ -59,9 +63,9 @@ class WelcomePage extends Component {
         <script>
           const data = {
             labels: [
-              'Red',
-              'Blue',
-              'Yellow'
+              'Persistent',
+              'Session',
+              'Tracking'
             ],
             datasets: [{
               label: 'My First Dataset',
