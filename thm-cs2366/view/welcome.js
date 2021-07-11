@@ -1,4 +1,5 @@
 const jetpack = require('fs-jetpack');
+const session = require('../src/session.js');
 import { h, Component, html, render } from '../assets/preact.js';
 
 /**Welcome page when the app is started */
@@ -39,6 +40,9 @@ class WelcomePage extends Component {
       domainHTML.push(html`<option value=${domain}>${domain}</option>`);
     });
 
+    // evaluate session
+    let evaluation = session.evaluateSession(data, 'all');
+
     // render charts in content
     render(html`
       <div class="row mb-3">
@@ -65,15 +69,15 @@ class WelcomePage extends Component {
             labels: [
               'Persistent',
               'Session',
-              'Tracking'
+              'Tracking',
             ],
             datasets: [{
               label: 'My First Dataset',
-              data: [300, 50, 100],
+              data: [${evaluation[0]}, ${evaluation[1]}, ${evaluation[2]}],
               backgroundColor: [
                 'rgb(255, 99, 132)',
                 'rgb(54, 162, 235)',
-                'rgb(255, 205, 86)'
+                'rgb(255, 205, 86)',
               ],
               hoverOffset: 4
             }]
