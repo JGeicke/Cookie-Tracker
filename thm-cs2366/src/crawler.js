@@ -3,8 +3,7 @@ const cookieParser = require('set-cookie-parser');
 const { DomainResult } = require("./domainResult");
 
 /** Class used to implement the crawlers functionality.*/
-class SmartCrawlerClass
-{
+class SmartCrawlerClass {
   /** minimum external links needed to continue*/
   MIN_EXTERNALS = 2;
 
@@ -29,8 +28,8 @@ class SmartCrawlerClass
    * @param {*} url - First url to add to session
    * @returns new session object
    */
-  createSession(url){
-    try{
+  createSession(url) {
+    try {
       new URL(url);
       return {
         start: new Date(),
@@ -39,7 +38,7 @@ class SmartCrawlerClass
         urls_done: [],
         results: {}
       };
-    } catch(err){
+    } catch (err) {
       console.log('Not a url');
       return undefined;
     }
@@ -52,26 +51,26 @@ class SmartCrawlerClass
    * @param {*} result - json result input of a session
    * @returns new session based on result
    */
-  continueSession(url, result){
+  continueSession(url, result) {
     let session;
-    try{
+    try {
       session = JSON.parse(result);
-      if(url && !session.urls_done.includes(url) && !session.urls.includes(url)){
+      if (url && !session.urls_done.includes(url) && !session.urls.includes(url)) {
         session.urls.push(url);
       } else {
         console.log('no url defined or already visited.');
       }
 
       // check parsed session
-      if(this.checkParsedSession(session)){
+      if (this.checkParsedSession(session)) {
         return session;
       }
       // abort later if session is undefined
       return undefined;
-    } catch(err){
+    } catch (err) {
       console.error(err);
       console.log('Illegal session\nStarting new session...');
-      if(url){
+      if (url) {
         session = this.createSession(url);
         return session;
       }
@@ -83,8 +82,8 @@ class SmartCrawlerClass
   /**
    * Abort current session if the crawler is crawling.
    */
-  abortSession(){
-    if(this.isRunning){
+  abortSession() {
+    if (this.isRunning) {
       this.abort = true;
     }
   }
@@ -94,32 +93,32 @@ class SmartCrawlerClass
    * @param {*} session - parsed session to check
    * @returns if the session matches the needed structure
    */
-  checkParsedSession(session){
-    let neededAttrs = ['start','end','urls','urls_done'];
-    let neededResultAttrs = ['persistentCookies','sessionCookies','trackingCookies'];
+  checkParsedSession(session) {
+    let neededAttrs = ['start', 'end', 'urls', 'urls_done'];
+    let neededResultAttrs = ['persistentCookies', 'sessionCookies', 'trackingCookies'];
 
     // check needed outer attributes
-    for(let i = 0; i<neededAttrs.length; i++){
-      if(session[neededAttrs[i]] === undefined){
+    for (let i = 0; i < neededAttrs.length; i++) {
+      if (session[neededAttrs[i]] === undefined) {
         return false;
       }
     }
     // check results
     let res = session['results'];
     console.log(res);
-    if(res === undefined){
+    if (res === undefined) {
       return false;
     }
 
     // check needed result domain objects
     let resultDomainObjects = Object.keys(res);
-    for(let i = 0; i<resultDomainObjects.length; i++){
+    for (let i = 0; i < resultDomainObjects.length; i++) {
       // get result domain object
       let resultDomainObject = res[resultDomainObjects[i]];
 
       // iterate needed attributes of result domain object
-      for(let k = 0; k<neededResultAttrs.length; k++){
-        if(resultDomainObject[neededResultAttrs[k]] === undefined){
+      for (let k = 0; k < neededResultAttrs.length; k++) {
+        if (resultDomainObject[neededResultAttrs[k]] === undefined) {
           return false;
         }
       }
@@ -132,12 +131,12 @@ class SmartCrawlerClass
    * @param {*} url - url to check
    * @returns if the url is a sub site of the domain
    */
-  isSubSite(url){
-    try{
+  isSubSite(url) {
+    try {
       let site = new URL(url);
       return site.hostname === this.currentDomain;
 
-    } catch(err){
+    } catch (err) {
       return false;
     }
   }
@@ -148,7 +147,7 @@ class SmartCrawlerClass
    * @param {*} input - input session
    * @returns result of the crawling in current session
    */
-  async crawl(e, input){
+  async crawl(e, input) {
     // maximum number of redirects
     const maxRedirects = 5;
     // internal urls of current domain
@@ -160,30 +159,30 @@ class SmartCrawlerClass
     this.currentSession = input;
 
     console.log('.crawling');
-    while(input.urls.length > 0 || internalURLs.length > 0){
+    while (input.urls.length > 0 || internalURLs.length > 0) {
       // check for abort
-      if(this.abort){
+      if (this.abort) {
         console.log('.abort');
         break;
       }
       // get next url
-      if(input.urls.length >= this.MIN_EXTERNALS){
+      if (input.urls.length >= this.MIN_EXTERNALS) {
         url = input.urls.pop();
-      } else if(internalURLs.length > 0) {
+      } else if (internalURLs.length > 0) {
         url = internalURLs.pop();
       } else {
         // no internal urls, but at least 1 external -> continue
         url = input.urls.pop();
-        if(url === undefined){
+        if (url === undefined) {
           console.log('.abort');
           break;
         }
       }
 
       //download
-      try{
-        console.log('..fetching '+url)
-        let download = await this.fetch(url);
+      try {
+        console.log('..fetching ' + url)
+        let download = await this.fetch(url, false);
 
         //add url to visited
         input.urls_done.push(url);
@@ -196,11 +195,11 @@ class SmartCrawlerClass
 
         let redirectCount = 0;
         //handle redirects
-        while(download.status !== 200 && redirectCount < maxRedirects){
+        while (download.status !== 200 && redirectCount < maxRedirects) {
           redirectCount++;
           url = download.redirectURL;
-          console.log('..fetching redirect '+url);
-          download = await this.fetch(url);
+          console.log('..fetching redirect ' + url);
+          download = await this.fetch(url, false);
 
           //add redirect url to visited
           input.urls_done.push(url);
@@ -208,7 +207,7 @@ class SmartCrawlerClass
 
 
         // continue when stuck in redirect loop
-        if(redirectCount === maxRedirects){
+        if (redirectCount === maxRedirects) {
           continue;
         }
 
@@ -217,10 +216,10 @@ class SmartCrawlerClass
         let parsedResult = await this.parse(download);
 
         // add external links to result
-        if(parsedResult.externalLinks !== null){
-          parsedResult.externalLinks.forEach((link)=>{
+        if (parsedResult.externalLinks !== null) {
+          parsedResult.externalLinks.forEach((link) => {
             // check if url is already contained
-            if(!input.urls.includes(link) && !input.urls_done.includes(link)){
+            if (!input.urls.includes(link) && !input.urls_done.includes(link)) {
               input.urls.push(link);
             }
           });
@@ -233,18 +232,22 @@ class SmartCrawlerClass
           });
         } */
 
-        DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies, parsedResult.sessionCookies, parsedResult.trackingCookies);
+        // Fetch url with DNT Header
+        let DNT_obj = await this.fetchDNT(url, maxRedirects);
 
-        console.log("external: "+input.urls.length);
-        console.log("internal: "+internalURLs.length);
+        DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies, 
+          parsedResult.sessionCookies, parsedResult.trackingCookies, DNT_obj.persistentCookies, DNT_obj.sessionCookies, DNT_obj.trackingCookies);
+
+        console.log("external: " + input.urls.length);
+        console.log("internal: " + internalURLs.length);
         // check if there are external links to follow
-        if(input.urls.length < this.MIN_EXTERNALS){
+        if (input.urls.length < this.MIN_EXTERNALS) {
           // add internal urls to analyze because no external urls were found
-          if(parsedResult.urls !== null){
-            parsedResult.urls.forEach((link)=>{
+          if (parsedResult.urls !== null) {
+            parsedResult.urls.forEach((link) => {
               console.log("adding internal:" + link);
               // check if url is already contained
-              if(!internalURLs.includes(link) && !input.urls_done.includes(link)){
+              if (!internalURLs.includes(link) && !input.urls_done.includes(link)) {
                 internalURLs.push(link);
               }
             });
@@ -253,9 +256,9 @@ class SmartCrawlerClass
           // clear internal urls and continue crawling to next domain
           internalURLs.length = 0;
         }
-        console.log("external: "+input.urls.length);
-        console.log("internal: "+internalURLs.length);
-      } catch(err){
+        console.log("external: " + input.urls.length);
+        console.log("internal: " + internalURLs.length);
+      } catch (err) {
         console.log(err);
       }
       //set end date
@@ -269,12 +272,30 @@ class SmartCrawlerClass
     return input;
   }
 
+  async fetchDNT(url, maxRedirects) {
+    let download = await this.fetch(url, true);
+    let redirectCount = 0;
+    while (download.status !== 200 && redirectCount < maxRedirects) {
+      redirectCount++;
+      url = download.redirectURL;
+      console.log('..fetching redirect ' + url);
+      download = await this.fetch(url, true);
+    }
+    let cookies = this.checkCookies(download.headers);
+    console.log("DNT cookies: " + JSON.stringify(cookies));
+    return { 
+      persistentCookies: cookies.persistentCookies,
+      sessionCookies: cookies.sessionCookies,
+      trackingCookies: cookies.trackingCookies
+    };
+  }
+
   /**
    * Check if website sets cookies
    * @param {*} headers - headers of downloaded website
    * @returns Array of with initial Cookies set by the website
    */
-  checkCookies(headers){
+  checkCookies(headers) {
     // init result object
     const result = {
       persistentCookies: {},
@@ -284,7 +305,7 @@ class SmartCrawlerClass
 
     // return if no set-cookie header present
     let cookies = [];
-    if (headers['set-cookie'] === undefined){
+    if (headers['set-cookie'] === undefined) {
       return result;
     }
     let cookieHeader = String(headers['set-cookie']);
@@ -292,14 +313,14 @@ class SmartCrawlerClass
 
     // parse cookies
     cookieStrings.forEach(string => {
-      let cookie = cookieParser.parseString(string, {decodeValues: true});
+      let cookie = cookieParser.parseString(string, { decodeValues: true });
       cookies.push(cookie);
     });
 
     // categorize cookies
     cookies.forEach(cookie => {
       // check "expires" of cookie & categorize them
-      if(cookie.expires !== undefined){
+      if (cookie.expires !== undefined) {
         result.persistentCookies[cookie.name] = cookie;
       } else {
         result.sessionCookies[cookie.name] = cookie;
@@ -314,17 +335,17 @@ class SmartCrawlerClass
    * @param {*} attribute - base attribute used for slicing e.g. script src=
    * @returns object with extracted internal & external urls.
    */
-  extractUrls(urls, attribute){
+  extractUrls(urls, attribute) {
     let external = [];
     let internal = [];
     //script src=""
     urls.forEach((url) => {
-      const sliced = url.slice(attribute.length+1, url.length-1);
-        if(this.isSubSite(sliced)){
-          internal.push(sliced);
-        } else {
-          external.push(sliced);
-        }
+      const sliced = url.slice(attribute.length + 1, url.length - 1);
+      if (this.isSubSite(sliced)) {
+        internal.push(sliced);
+      } else {
+        external.push(sliced);
+      }
     });
     return {
       external: external,
@@ -337,7 +358,7 @@ class SmartCrawlerClass
    * @param {*} body - body of website
    * @returns array of links to external sites
    */
-  parseLinks(body){
+  parseLinks(body) {
     const hrefRegex = /href="https?:\/\/[a-zA-Z0-9/?=:._-]*"/g;
 
     let internalUrls = [];
@@ -346,20 +367,20 @@ class SmartCrawlerClass
     // href (styles, fonts & links)
     let regexRes = body.match(hrefRegex);
 
-    if(regexRes !== null){
+    if (regexRes !== null) {
       let res = this.extractUrls(regexRes, 'href=');
-     
+
       // categorize
       internalUrls = internalUrls.concat(res.internal);
-      res.external.forEach((url)=>{
-        if(url.includes('font') || url.endsWith('.ttf') || url.endsWith('.otf') || url.endsWith('.css')){
+      res.external.forEach((url) => {
+        if (url.includes('font') || url.endsWith('.ttf') || url.endsWith('.otf') || url.endsWith('.css')) {
           // do nothing
         } else {
           externalLinks.push(url);
         }
       });
     }
-    
+
     // remove duplicates if present
     internalUrls = [...new Set(internalUrls)];
     externalLinks = [...new Set(externalLinks)];
@@ -398,33 +419,44 @@ class SmartCrawlerClass
    * @param {string} url - The URL to download.
    * @returns {Promise} A promise object with status, headers and content.
    */
-  fetch(url) {
+  fetch(url, isDNT) {
     return new Promise((resolve, reject) => {
       console.log('...getting');
-      https.get(url, (res)=> {
+      var hostname = new URL(url).hostname;
+      const options = {
+        hostname: hostname,
+        method: 'GET',
+        headers: {
+          'DNT': 1
+        }
+      };
+      var value = isDNT ? options : url;
+      console.log('FETCH: DNT is ' + isDNT);
+
+      https.get(value, (res) => {
         let data = [];
-        
+
         // Request unsuccessful
-        if(res.statusCode !== 200){
-          if(res.statusCode === 301 || res.statusCode === 302){
+        if (res.statusCode !== 200) {
+          if (res.statusCode === 301 || res.statusCode === 302) {
             console.log(`....redirect to ${res.headers.location}`);
             resolve({
               status: res.statusCode,
               redirectURL: res.headers.location
             })
-          } else{
+          } else {
             reject(`Download not successful! Status-Code of Response: ${res.statusCode}`);
           }
         }
 
         // Add the data chunks to array to concat later
-        res.on('readable', function (){
+        res.on('readable', function () {
           let chunk = this.read() || '';
           data.push(chunk);
         });
 
         // Concat Data chunks and return
-        res.on('end', function(){
+        res.on('end', function () {
           resolve({
             status: res.statusCode,
             headers: res.headers,
@@ -437,4 +469,4 @@ class SmartCrawlerClass
     });
   }
 }
-exports.SmartCrawler = new SmartCrawlerClass(); 
+exports.SmartCrawler = new SmartCrawlerClass();
