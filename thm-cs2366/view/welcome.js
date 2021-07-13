@@ -5,7 +5,8 @@ import { h, Component, html, render } from '../assets/preact.js';
 /**Welcome page when the app is started */
 class WelcomePage extends Component {
   dialogOpened = false;
-  test = false;
+  result;
+  chart;
 
   /**Create new welcome page component */
   constructor(props) {
@@ -33,15 +34,15 @@ class WelcomePage extends Component {
     // clear header
     document.getElementById('content').innerHTML = '';
 
+    //store result
+    this.result = data;
+
     // create options for selection
     let domains = Object.keys(data.results);
     let domainHTML = [];
     domains.forEach((domain) => {
       domainHTML.push(html`<option value=${domain}>${domain}</option>`);
     });
-
-    // evaluate session
-    let evaluation = session.evaluateSession(data, 'all');
 
     // render charts in content
     render(html`
@@ -59,52 +60,11 @@ class WelcomePage extends Component {
              Details
           </button>
         </div>
-        <div class="col-sm-8 align-self-center pb-2" style="min-height: 250px; max-height:300px;">
+        <div id="chart-container" class="col-sm-8 align-self-center pb-2" style="min-height: 250px; max-height:300px;">
           <div style="width: 100%; height:80%">
             <canvas id="chart" style="width=100; height=100"></canvas>
           </div>
         </div>
-        <script>
-          const data = {
-            labels: [
-              'Persistent',
-              'Session',
-              'Tracking',
-            ],
-            datasets: [{
-              label: 'My First Dataset',
-              data: [${evaluation[0]}, ${evaluation[1]}, ${evaluation[2]}],
-              backgroundColor: [
-                'rgb(255, 99, 132)',
-                'rgb(54, 162, 235)',
-                'rgb(255, 205, 86)',
-              ],
-              hoverOffset: 4
-            }]
-          };
-
-          const config = {
-            type: 'doughnut',
-            data: data,
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  labels: {
-                    color: 'rgba(255,255,255,1.0)'
-                  },
-                  position: 'right'
-                },		
-              }
-            }
-          };
-
-          var myChart = new Chart(
-              document.getElementById('chart'),
-              config
-          );
-        </script>
     </div>
       <div class="row"></div>
     `, document.getElementById('content'));
@@ -129,6 +89,9 @@ class WelcomePage extends Component {
     </div>
     <div class="col-sm-3 text-center"></div>
     `, document.getElementById('header'));
+
+    // create chart script
+    this.generateChart(data, 'all');
   }
 
   showCrawlView(){
@@ -136,14 +99,74 @@ class WelcomePage extends Component {
     // TODO
   }
 
+  generateChart(data, scope){
+    // evaluate session
+    let evaluation = session.evaluateSession(data, scope);
+
+    // create chart
+    const chartInput = {
+      labels: [
+        'Persistent',
+        'Session',
+        'Tracking',
+      ],
+      datasets: [{
+        label: 'My First Dataset',
+        data: [evaluation[0], evaluation[1], evaluation[2]],
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)',
+        ],
+        hoverOffset: 4
+      }]
+    };
+
+    const config = {
+      type: 'doughnut',
+      data: chartInput,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: 'rgba(255,255,255,1.0)'
+            },
+            position: 'right'
+          },
+        }
+      }
+    };
+
+    this.chart = new Chart(
+        document.getElementById('chart'),
+        config
+    );
+  }
+
+  updateChart(data, scope){
+    // evaluate session
+    let evaluation = session.evaluateSession(data, scope);
+
+    let index = 0;
+
+    // update data in chart
+    this.chart.data.datasets.forEach((dataset) => {
+      dataset.data.splice(0, 3);
+      dataset.data.push(evaluation[index++]);
+      dataset.data.push(evaluation[index++]);
+      dataset.data.push(evaluation[index++]);
+    });
+
+    //update chart
+    this.chart.update();
+  }
+
   changeChart(){
     console.log('change chart');
     let key = document.getElementById('domainSelection').value;
-    if(key === 'all'){
-      // standard
-    } else {
-      // specific
-    }
+    this.updateChart(this.result, key);
   }
 
   toggleLog(){
