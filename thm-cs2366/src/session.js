@@ -31,8 +31,13 @@ class Session {
 						console.log('tracking ' + trackingCookiesCount);
 				});
 
+				// check if no cookies in session found
+				if((persistentCookies+sessionCookies+trackingCookies)< 1){
+						return [0,0,0,1];
+				}
+
 				// return cookie evaluation
-				return [persistentCookies, sessionCookies, trackingCookies];
+				return [persistentCookies, sessionCookies, trackingCookies, 0];
 		}
 }
 module.exports = new Session();

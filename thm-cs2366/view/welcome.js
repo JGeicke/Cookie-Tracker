@@ -109,14 +109,16 @@ class WelcomePage extends Component {
         'Persistent',
         'Session',
         'Tracking',
+        'No Cookies found'
       ],
       datasets: [{
         label: 'My First Dataset',
-        data: [evaluation[0], evaluation[1], evaluation[2]],
+        data: [evaluation[0], evaluation[1], evaluation[2], evaluation[3]],
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
           'rgb(255, 205, 86)',
+          'rgb(80,80,80)'
         ],
         hoverOffset: 4
       }]
@@ -153,7 +155,8 @@ class WelcomePage extends Component {
 
     // update data in chart
     this.chart.data.datasets.forEach((dataset) => {
-      dataset.data.splice(0, 3);
+      dataset.data.splice(0, 4);
+      dataset.data.push(evaluation[index++]);
       dataset.data.push(evaluation[index++]);
       dataset.data.push(evaluation[index++]);
       dataset.data.push(evaluation[index++]);
