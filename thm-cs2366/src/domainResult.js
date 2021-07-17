@@ -7,17 +7,13 @@ class DomainResult {
     * @param {*} sessionCookies - parsed session cookies
     * @param {*} trackingCookies - detected tracking cookies
   */
-  fillDomainResultObject(domain, currentSession, persistentCookies, sessionCookies, trackingCookies, dnt_persistent, dnt_session, dnt_tracking) {
+  fillDomainResultObject(domain, currentSession, persistentCookies, sessionCookies, trackingCookies) {
+    //var tracking = compareCookies(trackingCookies, dnt_tracking);
     if (currentSession.results[domain] === undefined) {
       currentSession.results[domain] = {
         persistentCookies: persistentCookies,
         sessionCookies: sessionCookies,
-        trackingCookies: trackingCookies,
-        DNT_Cookies: {
-          persistentCookies: dnt_persistent,
-          sessionCookies: dnt_session,
-          trackingCookies: dnt_tracking
-        }
+        trackingCookies: trackingCookies
       };
     } else {
       // domain object was already created

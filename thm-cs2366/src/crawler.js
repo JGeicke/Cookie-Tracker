@@ -235,8 +235,10 @@ class SmartCrawlerClass {
         // Fetch url with DNT Header
         let DNT_obj = await this.fetchDNT(url, maxRedirects);
 
-        DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies, 
-          parsedResult.sessionCookies, parsedResult.trackingCookies, DNT_obj.persistentCookies, DNT_obj.sessionCookies, DNT_obj.trackingCookies);
+        parsedResult.trackingCookies = this.compareCookies(DNT_obj, parsedResult);
+
+        DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies,
+          parsedResult.sessionCookies, parsedResult.trackingCookies);
 
         console.log("external: " + input.urls.length);
         console.log("internal: " + internalURLs.length);
@@ -272,6 +274,13 @@ class SmartCrawlerClass {
     return input;
   }
 
+  /**
+   * Executes a fetch with the DNT header set
+   * 
+   * @param {*} url the url to be fetched
+   * @param {*} maxRedirects the max number of redirects
+   * @returns cookies that were set with DNT on
+   */
   async fetchDNT(url, maxRedirects) {
     let download = await this.fetch(url, true);
     let redirectCount = 0;
@@ -282,12 +291,36 @@ class SmartCrawlerClass {
       download = await this.fetch(url, true);
     }
     let cookies = this.checkCookies(download.headers);
-    console.log("DNT cookies: " + JSON.stringify(cookies));
-    return { 
+    //console.log("DNT cookies: " + JSON.stringify(cookies));
+    return {
       persistentCookies: cookies.persistentCookies,
       sessionCookies: cookies.sessionCookies,
       trackingCookies: cookies.trackingCookies
     };
+  }
+
+  compareCookies(DNT_obj, parsedResult) {
+    var tracking = {};
+    console.log("LENGTH: " + Object.keys(DNT_obj).length);
+    if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
+      Object.keys(DNT_obj.sessionCookies).length === Object.keys(parsedResult.sessionCookies).length) {
+      console.log("Persistent and session cookies match with and without DNT");
+    } else {
+      for (let i = 0; i < Object.keys(DNT_obj.persistentCookies).length; i++) {
+        if (!Object.keys(parsedResult.persistentCookies).includes(Object.keys(DNT_obj.persistentCookies)[i])) {
+          console.log("Found something!");
+          tracking.push(DNT_obj.persistentCookies[i]);
+        }
+      }
+
+      for (let i = 0; i < Object.keys(DNT_obj.sessionCookies).length; i++) {
+        if (!Object.keys(parsedResult.sessionCookies).includes(Object.keys(DNT_obj.sessionCookies)[i])) {
+          console.log("Found something!");
+          tracking.push(DNT_obj.sessionCookies[i]);
+        }
+      }
+    }
+    return tracking;
   }
 
   /**
