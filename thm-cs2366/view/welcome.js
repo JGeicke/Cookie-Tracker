@@ -99,7 +99,9 @@ class WelcomePage extends Component {
 
   showCrawlView(){
     console.log('return');
-    // TODO
+    document.body.innerHTML = '';
+
+    render(this.render(), document.body);
   }
 
   generateChart(data, scope){
