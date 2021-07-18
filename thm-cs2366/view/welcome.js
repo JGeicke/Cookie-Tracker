@@ -99,8 +99,10 @@ class WelcomePage extends Component {
 
   showCrawlView(){
     console.log('return');
+    // reset content
     document.body.innerHTML = '';
 
+    // render crawler view
     render(this.render(), document.body);
   }
 
@@ -317,12 +319,16 @@ class WelcomePage extends Component {
   detailsClicked(){
     // domain key to display the details for
     let key = document.getElementById('domainSelection').value;
+    let cookies;
+    if(key === 'all'){
+      // TODO: handle 'all'
+      cookies = this.result.results;
+    } else{
+      // get cookies of domain
+      cookies = this.result.results[key];
+    }
 
-    // TODO: handle 'all'
-
-    console.log(this.result);
-    // get cookies of domain
-    let cookies = this.result.results[key];
+    console.log(this.result.results);
     ipcRenderer.invoke('detailsButtonClicked', key, cookies);
   }
 

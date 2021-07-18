@@ -35,7 +35,51 @@ class DetailsPage extends Component{
 
 		detailsReceived(e, title, cookies){
 				this.title = title;
-				this.cookies = cookies;
+
+				// check if specific domain or everything should be displayed
+				if(this.title === 'all'){
+						// get all domain keys
+						let k = Object.keys(cookies);
+						// create base structure of cookies
+						this.cookies = {persistentCookies: {}, sessionCookies: {}, trackingCookies: {}};
+
+						// iterate domains
+						k.forEach((key) => {
+								// get session cookies of domain
+								let sessionCookies = cookies[key].sessionCookies;
+
+								// iterate session cookie keys
+								let k = Object.keys(sessionCookies);
+								k.forEach((key) => {
+										//add session cookies to displayed result
+										this.cookies.sessionCookies[key] = sessionCookies[key];
+								});
+
+								// get persistent cookies of domain
+								let persistentCookies = cookies[key].persistentCookies;
+
+								// iterate persistent cookie keys
+								k = Object.keys(persistentCookies);
+								k.forEach((key) => {
+										//add persistent cookies to displayed result
+										this.cookies.persistentCookies[key] = persistentCookies[key];
+								});
+
+								// get tracking cookies of domain
+								let trackingCookies = cookies[key].trackingCookies;
+
+								// iterate tracking cookie keys
+								k = Object.keys(trackingCookies);
+								k.forEach((key) => {
+										//add tracking cookies to displayed result
+										this.cookies.trackingCookies[key] = trackingCookies[key];
+								});
+						});
+
+						// TODO: handle multiple cookies with same name
+				} else {
+						this.cookies = cookies;
+				}
 
 				// render title
 				render(html`<strong>${this.title.toString()}</strong>`, document.getElementById('display-domain'));
