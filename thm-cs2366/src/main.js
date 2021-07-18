@@ -30,7 +30,7 @@ class Main {
       fullscreenable: false,
       show: false,
       backgroundColor: '#c4c6c4',
-      icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
+      icon: path.join(__dirname, '../assets/icons/cookie-jar.png'),
       webPreferences: {
           nodeIntegration: true,
           enableRemoteModule: true,
@@ -128,7 +128,7 @@ class Main {
         show: false,
         autoHideMenuBar: true,
         parent: parent,
-        icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
+        icon: path.join(__dirname, '../assets/icons/setting.png'),
         modal: true,
         webPreferences: {
           nodeIntegration: true,
@@ -163,7 +163,7 @@ class Main {
       show: false,
       autoHideMenuBar: true,
       parent: parent,
-      icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
+      icon: path.join(__dirname, '../assets/icons/cookie.png'),
       modal: true,
       webPreferences: {
         nodeIntegration: true,
