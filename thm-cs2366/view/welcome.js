@@ -6,8 +6,20 @@ import { h, Component, html, render } from '../assets/preact.js';
 
 /**Welcome page when the app is started */
 class WelcomePage extends Component {
+  /**
+   * whether the load/save dialogue is currently opened.
+   * @type {boolean}
+   */
   dialogOpened = false;
+
+  /**
+   * session results.
+   */
   result;
+
+  /**
+   * reference to the chart element.
+   */
   chart;
 
   /**Create new welcome page component */
@@ -33,6 +45,11 @@ class WelcomePage extends Component {
     ipcRenderer.on('resultReceived', this.resultReceived);
   }
 
+  /**
+   * Render the chart view when the session is done or was canceled.
+   * @param event - reference to the event
+   * @param data - session result data
+   */
   resultReceived(event, data){
     // clear header
     document.getElementById('content').innerHTML = '';
@@ -97,6 +114,9 @@ class WelcomePage extends Component {
     this.generateChart(data, 'all');
   }
 
+  /**
+   * Change view to the standard crawler view.
+   */
   showCrawlView(){
     console.log('return');
     // reset content
@@ -106,6 +126,11 @@ class WelcomePage extends Component {
     render(this.render(), document.body);
   }
 
+  /**
+   * Create and display the chart element.
+   * @param data - data to create the chart off
+   * @param scope - scope (all/domain) to evaluate the data with
+   */
   generateChart(data, scope){
     // evaluate session
     let evaluation = session.evaluateSession(data, scope);
@@ -154,6 +179,11 @@ class WelcomePage extends Component {
     );
   }
 
+  /**
+   * Update the exisiting chart element.
+   * @param data - data to update the chart with
+   * @param scope - scope (all/domain) to evaluate the data with
+   */
   updateChart(data, scope){
     // evaluate session
     let evaluation = session.evaluateSession(data, scope);
@@ -173,12 +203,18 @@ class WelcomePage extends Component {
     this.chart.update();
   }
 
+  /**
+   * Change and update the chart to display the results of the selected domain.
+   */
   changeChart(){
     console.log('change chart');
     let key = document.getElementById('domainSelection').value;
     this.updateChart(this.result, key);
   }
 
+  /**
+   * Workaround to toggle the url log.
+   */
   toggleLog(){
     console.log('click');
     this.test = !this.test;

@@ -1,5 +1,8 @@
 import { Component, html, render } from '../assets/preact.js';
 
+/**
+ *  Component of the crawler settings.
+ */
 class SettingsPage extends Component{
     constructor(props) {
         super(props);
@@ -62,7 +65,36 @@ class SettingsPage extends Component{
                     </div>
                 </div>
             </div>
-            <div class="row align-items-center">
+            <hr class="my-4" />
+            <strong class="mb-0">Crawl Behaviour</strong>
+            <p>Set the behaviour of the crawler.</p>
+            <div class="list-group mb-3 shadow">
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            Breadth
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="behaviour" id="behaviourRadios1" value="breadth" checked/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            Single Page
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="behaviour" id="behaviourRadios2" value="single-page"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center mb-3">
                 <div class="col-sm-4 text-center"></div>
                 <div class="col-sm-4 text-center">
                     <button type="button" class="btn btn-primary shadow-none">Save</button>

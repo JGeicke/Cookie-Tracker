@@ -1,4 +1,14 @@
+/**
+ * Class representing a crawler session.
+ */
 class Session {
+
+		/**
+		 * Evaluate the current results of the session that will be displayed in the chart.
+		 * @param session - current session
+		 * @param scope - scope ('all' or specific domain)
+		 * @returns {(number|number)[]|number[]} - return the results to be displayed in the chart
+		 */
 		evaluateSession(session, scope){
 				let persistentCookies = 0;
 				let trackingCookies = 0;

@@ -1,8 +1,18 @@
 import { Component, html, render } from '../assets/preact.js';
 
+/**
+ * Component to display the detailed results.
+ */
 class DetailsPage extends Component{
 
+		/**
+		 * Cookies to be displayed in detail.
+		 */
 		cookies;
+		/**
+		 * Current scope (all or domain) of the displayed details.
+		 * @type {string}
+		 */
 		title = '';
 
 		constructor(props) {
@@ -11,6 +21,11 @@ class DetailsPage extends Component{
 				ipcRenderer.on('detailsReceived', this.detailsReceived);
 		}
 
+		/**
+		 * Format the expiring date of persistent/tracking cookies.
+		 * @param date - date to be formated
+		 * @returns {string} - formated date
+		 */
 		formatDateString(date){
 				// format date
 				let month = '' + (date.getMonth() + 1);
@@ -33,6 +48,12 @@ class DetailsPage extends Component{
 				return '' + [day, month, year].join('-') + ' ' + hour + ':' + minutes;
 		}
 
+		/**
+		 * Handle 'detailsReceived' event and render the dom-elements to display the details.
+		 * @param e - event reference
+		 * @param title - title or scope to display the details of
+		 * @param cookies - cookies to display in detail
+		 */
 		detailsReceived(e, title, cookies){
 				this.title = title;
 
@@ -152,6 +173,7 @@ class DetailsPage extends Component{
 				render(cookieData, document.getElementById('trackingCookie-body'));
 
 		}
+
 		/** render the html elements*/
 		render() {
 				console.log('render...'+this.title);

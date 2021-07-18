@@ -1,3 +1,6 @@
+/**
+ * Class to represent the crawling results of each domain.
+ */
 class DomainResult{
      /**
      * Creates & fills a domain result object for the current domain.
