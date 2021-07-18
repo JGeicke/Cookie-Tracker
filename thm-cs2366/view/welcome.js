@@ -1,6 +1,8 @@
 const jetpack = require('fs-jetpack');
 const session = require('../src/session.js');
+import DetailsPage from './details.js';
 import { h, Component, html, render } from '../assets/preact.js';
+
 
 /**Welcome page when the app is started */
 class WelcomePage extends Component {
@@ -21,6 +23,7 @@ class WelcomePage extends Component {
     this.loadJsonResult = this.loadJsonResult.bind(this);
     this.saveJsonResult = this.saveJsonResult.bind(this);
     this.settingsClicked = this.settingsClicked.bind(this);
+    this.detailsClicked = this.detailsClicked.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
     this.resultReceived = this.resultReceived.bind(this)
     this.showCrawlView = this.showCrawlView.bind(this);
@@ -55,7 +58,7 @@ class WelcomePage extends Component {
             <option value="all" selected>All domains</option>
             ${domainHTML}
           </select>
-          <button class="btn prim-btn shadow-none mt-4">
+          <button class="btn prim-btn shadow-none mt-4" onClick=${this.detailsClicked}>
             <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/info-circle-fill.svg"/>
              Details
           </button>
@@ -306,6 +309,19 @@ class WelcomePage extends Component {
   /** Settings button handler*/
   settingsClicked(){
     ipcRenderer.invoke('settingsButtonClicked');
+  }
+
+  /** Settings button handler*/
+  detailsClicked(){
+    // domain key to display the details for
+    let key = document.getElementById('domainSelection').value;
+
+    // TODO: handle 'all'
+
+    console.log(this.result);
+    // get cookies of domain
+    let cookies = this.result.results[key];
+    ipcRenderer.invoke('detailsButtonClicked', key, cookies);
   }
 
   /** render the html elements*/

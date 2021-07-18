@@ -14,6 +14,7 @@ class Main {
     ipcMain.handle('buttonClicked', this.onButtonClicked);
     ipcMain.handle('abortButtonClicked', this.onAbortButtonClicked);
     ipcMain.handle('settingsButtonClicked', this.onSettingsButtonClicked);
+    ipcMain.handle('detailsButtonClicked', this.onDetailsButtonClicked);
   }
 
   /**
@@ -110,7 +111,7 @@ class Main {
     }
 
   /**
-   * Open new settings window
+   * Open new settings modal window
    * @param {*} e - reference to event
    */
   onSettingsButtonClicked(e){
@@ -143,5 +144,42 @@ class Main {
         child.show()
       });
     }
+
+  /**
+   * Open new details modal window
+   * @param {*} e - reference to event
+   */
+  onDetailsButtonClicked(e, title, cookies){
+    console.log('details clicked');
+    let parent= BrowserWindow.getFocusedWindow();
+    // create new child window
+    const child = new BrowserWindow({
+      width: 500,
+      height: 460,
+      useContentSize: true,
+      minimizable: false,
+      resizable: false,
+      fullscreenable: false,
+      show: false,
+      autoHideMenuBar: true,
+      parent: parent,
+      icon: path.join(__dirname, '../assets/icons/png/64x64.png'),
+      modal: true,
+      webPreferences: {
+        nodeIntegration: true,
+        enableRemoteModule: true,
+        contextIsolation: false
+      }
+    });
+    // load setting html
+    child.loadFile('view/details.html');
+
+    // show if ready
+    child.once('ready-to-show', () => {
+      child.show()
+      console.log('main...' + title +' '+ cookies);
+      child.webContents.send('detailsReceived', title, cookies);
+    });
+  }
 }
 const main = new Main();

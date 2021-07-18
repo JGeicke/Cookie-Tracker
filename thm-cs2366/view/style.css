@@ -73,3 +73,6 @@ div .prim-btn:active {
 .log {
   background-color: white;
 }
+.details-table-body {
+  font-size: 0.8rem;
+}
