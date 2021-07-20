@@ -360,7 +360,16 @@ class SmartCrawlerClass {
     // categorize cookies
     cookies.forEach(cookie => {
       // check "expires" of cookie & categorize them
-      if (cookie.expires !== undefined) {
+      if (cookie.maxAge !== undefined || cookie.expires !== undefined) {
+        // calculate expires if not set
+        if(cookie.expires === undefined){
+          let date = new Date();
+          let currSecs = date.getSeconds();
+          date.setSeconds(currSecs + cookie.maxAge);
+
+          // set expires for later display
+          cookie.expires = date.getSeconds();
+        }
         result.persistentCookies[cookie.name] = cookie;
       } else {
         result.sessionCookies[cookie.name] = cookie;
