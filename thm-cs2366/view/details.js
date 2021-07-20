@@ -48,6 +48,99 @@ class DetailsPage extends Component{
 				return '' + [day, month, year].join('-') + ' ' + hour + ':' + minutes;
 		}
 
+		renderAllDetails(cookies){
+				// get all domain keys
+				let keys = Object.keys(cookies);
+
+				// render title
+				render(html`<strong>All Domains</strong>`, document.getElementById('display-domain'));
+
+				// render headers
+				render(html`<tr><th scope="col">Domain</th><th scope="col">Name</th><th scope="col">Value</th></tr>`, document.getElementById('sessionCookie-header'));
+				render(html`<tr><th scope="col">Domain</th><th scope="col">Name</th><th scope="col">Value</th><th scope="col">Expires</th></tr>`, document.getElementById('persistentCookie-header'));
+				render(html`<tr><th scope="col">Domain</th><th scope="col">Name</th><th scope="col">Value</th><th scope="col">Expires</th></tr>`, document.getElementById('trackingCookie-header'));
+
+				// result objects to be displayed
+				let sessionCookieData = [];
+				let persistentCookieData = [];
+				let trackingCookieData = [];
+
+				// iterate domains
+				keys.forEach((key) => {
+						let domain = key;
+
+						console.log(key);
+
+						// session cookies
+						let sessionCookies = cookies[domain].sessionCookies;
+						let cookieNames = Object.keys(sessionCookies);
+						cookieNames.forEach((name) => {
+								let value = sessionCookies[name].value;
+
+								sessionCookieData.push(html`
+								<tr>
+										<td>${domain}</td>
+                    <td>${name}</td>
+                    <td>${value}</td>
+								</tr>
+						`);
+						});
+
+						// persistent cookies
+						let persistentCookies = cookies[domain].persistentCookies;
+						cookieNames = Object.keys(persistentCookies);
+						cookieNames.forEach((name) => {
+								let value = persistentCookies[name].value;
+								let date = persistentCookies[name].expires;
+
+								let dateString = '';
+								if(date){
+										// format date
+										dateString = this.formatDateString(date);
+								}
+
+								persistentCookieData.push(html`
+								<tr>
+										<td>${domain}</td>
+                    <td>${name}</td>
+                    <td>${value}</td>
+										<td>${dateString}</td>
+								</tr>
+						`);
+						});
+
+						// tracking cookies
+						let trackingCookies = cookies[domain].trackingCookies;
+						cookieNames = Object.keys(trackingCookies);
+						cookieNames.forEach((name) => {
+								let value = trackingCookies[name].value;
+								let date = trackingCookies[name].expires;
+
+								let dateString = '';
+								if(date){
+										// format date
+										dateString = this.formatDateString(date);
+								}
+
+								trackingCookieData.push(html`
+                    <tr>
+                        <td>${domain}</td>
+                        <td>${name}</td>
+                        <td>${value}</td>
+                        <td>${dateString}</td>
+                    </tr>
+								`);
+						});
+				});
+
+				// render session cookies
+				render(sessionCookieData, document.getElementById('sessionCookie-body'));
+				// render persistent cookies
+				render(persistentCookieData, document.getElementById('persistentCookie-body'));
+				// render tracking cookies
+				render(trackingCookieData, document.getElementById('trackingCookie-body'));
+		}
+
 		/**
 		 * Handle 'detailsReceived' event and render the dom-elements to display the details.
 		 * @param e - event reference
@@ -59,48 +152,11 @@ class DetailsPage extends Component{
 
 				// check if specific domain or everything should be displayed
 				if(this.title === 'all'){
-						// get all domain keys
-						let k = Object.keys(cookies);
-						// create base structure of cookies
-						this.cookies = {persistentCookies: {}, sessionCookies: {}, trackingCookies: {}};
-
-						// iterate domains
-						k.forEach((key) => {
-								// get session cookies of domain
-								let sessionCookies = cookies[key].sessionCookies;
-
-								// iterate session cookie keys
-								let k = Object.keys(sessionCookies);
-								k.forEach((key) => {
-										//add session cookies to displayed result
-										this.cookies.sessionCookies[key] = sessionCookies[key];
-								});
-
-								// get persistent cookies of domain
-								let persistentCookies = cookies[key].persistentCookies;
-
-								// iterate persistent cookie keys
-								k = Object.keys(persistentCookies);
-								k.forEach((key) => {
-										//add persistent cookies to displayed result
-										this.cookies.persistentCookies[key] = persistentCookies[key];
-								});
-
-								// get tracking cookies of domain
-								let trackingCookies = cookies[key].trackingCookies;
-
-								// iterate tracking cookie keys
-								k = Object.keys(trackingCookies);
-								k.forEach((key) => {
-										//add tracking cookies to displayed result
-										this.cookies.trackingCookies[key] = trackingCookies[key];
-								});
-						});
-
-						// TODO: handle multiple cookies with same name
-				} else {
-						this.cookies = cookies;
+						this.renderAllDetails(cookies);
+						return;
 				}
+
+				this.cookies = cookies;
 
 				// render title
 				render(html`<strong>${this.title.toString()}</strong>`, document.getElementById('display-domain'));
@@ -191,7 +247,7 @@ class DetailsPage extends Component{
                     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#cookieAccordion">
                         <div class="accordion-body">
                             <table class="table">
-                                <thead>
+                                <thead id="persistentCookie-header">
                                 <tr>
                                     <th scope="col">Name</th>
                                     <th scope="col">Value</th>
@@ -213,7 +269,7 @@ class DetailsPage extends Component{
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#cookieAccordion">
                         <div class="accordion-body">
                             <table class="table">
-                                <thead>
+                                <thead id="sessionCookie-header">
                                 <tr>
                                     <th scope="col">Name</th>
                                     <th scope="col">Value</th>
@@ -234,7 +290,7 @@ class DetailsPage extends Component{
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#cookieAccordion">
                         <div class="accordion-body">
                             <table class="table">
-                                <thead>
+                                <thead id="trackingCookie-header">
                                 <tr>
                                     <th scope="col">Name</th>
                                     <th scope="col">Value</th>

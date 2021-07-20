@@ -154,8 +154,8 @@ class Main {
     let parent= BrowserWindow.getFocusedWindow();
     // create new child window
     const child = new BrowserWindow({
-      width: 500,
-      height: 460,
+      width: 600,
+      height: 560,
       useContentSize: true,
       minimizable: false,
       resizable: false,
