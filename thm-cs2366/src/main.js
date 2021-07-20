@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { SmartCrawlerMenu } = require('./menu.js');
 const { SmartCrawler } = require('./crawler.js');
+const Session = require('./session.js');
 
 /** Main class to initialize the window & control the flow of the application */
 class Main {
@@ -82,9 +83,9 @@ class Main {
       try{
         let session;
         if(result){
-          session = SmartCrawler.continueSession(input, result);
+          session = Session.continueSession(input, result);
         } else if(input !== undefined){
-          session = SmartCrawler.createSession(input);
+          session = Session.createSession(input);
         }else {
           throw new Error('Input & Result were undefined');
         }

@@ -24,106 +24,12 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Create a new session object.
-   * @param {*} url - First url to add to session
-   * @returns new session object
-   */
-  createSession(url) {
-    try {
-      new URL(url);
-      return {
-        start: new Date(),
-        end: '',
-        urls: [url],
-        urls_done: [],
-        results: {}
-      };
-    } catch (err) {
-      console.log('Not a url');
-      return undefined;
-    }
-  }
-
-  /**
-   * Parse the result input & create a session based on it.
-   * Add the url input to the session if the url has not been explored yet.
-   * @param {*} url - url input
-   * @param {*} result - json result input of a session
-   * @returns new session based on result
-   */
-  continueSession(url, result) {
-    let session;
-    try {
-      session = JSON.parse(result);
-      if (url && !session.urls_done.includes(url) && !session.urls.includes(url)) {
-        session.urls.push(url);
-      } else {
-        console.log('no url defined or already visited.');
-      }
-
-      // check parsed session
-      if (this.checkParsedSession(session)) {
-        return session;
-      }
-      // abort later if session is undefined
-      return undefined;
-    } catch (err) {
-      console.error(err);
-      console.log('Illegal session\nStarting new session...');
-      if (url) {
-        session = this.createSession(url);
-        return session;
-      }
-      // abort later if session is undefined
-      return undefined;
-    }
-  }
-
-  /**
    * Abort current session if the crawler is crawling.
    */
   abortSession() {
     if (this.isRunning) {
       this.abort = true;
     }
-  }
-
-  /**
-   * Check if parsed session matches the needed session structure
-   * @param {*} session - parsed session to check
-   * @returns if the session matches the needed structure
-   */
-  checkParsedSession(session) {
-    let neededAttrs = ['start', 'end', 'urls', 'urls_done'];
-    let neededResultAttrs = ['persistentCookies', 'sessionCookies', 'trackingCookies'];
-
-    // check needed outer attributes
-    for (let i = 0; i < neededAttrs.length; i++) {
-      if (session[neededAttrs[i]] === undefined) {
-        return false;
-      }
-    }
-    // check results
-    let res = session['results'];
-    console.log(res);
-    if (res === undefined) {
-      return false;
-    }
-
-    // check needed result domain objects
-    let resultDomainObjects = Object.keys(res);
-    for (let i = 0; i < resultDomainObjects.length; i++) {
-      // get result domain object
-      let resultDomainObject = res[resultDomainObjects[i]];
-
-      // iterate needed attributes of result domain object
-      for (let k = 0; k < neededResultAttrs.length; k++) {
-        if (resultDomainObject[neededResultAttrs[k]] === undefined) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 
   /**
