@@ -299,6 +299,13 @@ class SmartCrawlerClass {
     };
   }
 
+  /**
+   * Compares DNT cookies with no DNT cookies and adds result to external cookies
+   * 
+   * @param {*} DNT_obj the DNT object
+   * @param {*} parsedResult result without DNT
+   * @returns tracking cookies
+   */
   compareCookies(DNT_obj, parsedResult) {
     var tracking = {};
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
