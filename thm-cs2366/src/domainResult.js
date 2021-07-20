@@ -1,23 +1,3 @@
-class DomainResult {
-  /**
-    * Creates & fills a domain result object for the current domain.
-    * @param {*} domain - current domain
-    * @param {*} currentSession - current session object
-    * @param {*} persistentCookies - parsed persistent cookies
-    * @param {*} sessionCookies - parsed session cookies
-    * @param {*} trackingCookies - detected tracking cookies
-  */
-  fillDomainResultObject(domain, currentSession, persistentCookies, sessionCookies, trackingCookies) {
-    //var tracking = compareCookies(trackingCookies, dnt_tracking);
-    if (currentSession.results[domain] === undefined) {
-      currentSession.results[domain] = {
-        persistentCookies: persistentCookies,
-        sessionCookies: sessionCookies,
-        trackingCookies: trackingCookies
-      };
-    } else {
-      // domain object was already created
-      let domainResultObject = currentSession.results[domain];
 /**
  * Class to represent the crawling results of each domain.
  */
