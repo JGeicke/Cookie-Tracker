@@ -11,7 +11,7 @@ div {
   --hilite1: rgba(255, 255, 255, 0.3);
   --accent: #007abc;
   --hr: #cccccc;
-  color: var(--foreground);
+  color: var(--btn-text);
   background-color: var(--background);
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   user-select: none;
@@ -67,4 +67,12 @@ div .prim-btn:active {
   background-color: #61745b;
   border-color: #697b63;
 }
-/*# sourceMappingURL=style.css.map */
+.icon {
+  filter: invert(1);
+}
+.log {
+  background-color: white;
+}
+.details-table-body {
+  font-size: 0.8rem;
+}

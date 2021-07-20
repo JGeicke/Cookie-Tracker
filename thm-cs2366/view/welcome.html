@@ -5,7 +5,8 @@
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
         <title>Cookie Tracker</title>
         <link rel="stylesheet" type="text/css" href="style.css">
-        <link href="../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../node_modules/chart.js/dist/chart.js"></script>
         <script>
             const { ipcRenderer} = require('electron');
             const { dialog } = require('electron').remote;
@@ -13,9 +14,9 @@
             const appVersion = app.getVersion();
         </script>
         <script type="module" src="welcome.js"></script>
-
     </head>
     <body>
-        <script src="../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -1,6 +1,6 @@
-# Web Crawler
+# Cookie Tracker
 ## Allgemein
-Beim Web Crawler handelt es sich um eine Software zur Analyse von Webseiten. Dabei kann der Benutzer eine Website bezüglich datenschutzrelevanter Daten wie externe Ressourcen & Cookie analysieren lassen. Der Crawler erkennt & folgt dabei automatisch Links, die zur Domain gehören, die es zu analysieren gilt.
+Beim Cookie Tracker handelt es sich um eine Software zur Analyse von Webseiten hinsichtlich Cookies. Dabei kann der Benutzer zunächst eine Domain bezüglich __Cookies__ & dem Umgang mit __Do Not Track (DNT)-__ & __Global Privacy Control (GPC)-Header__ untersuchen. Während der Analyse erkennt der Cookie Tracker externe Links & folgt diesen nach Abschluss der Analyse. Dies wird so oft wiederholt, bis keine weiteren externen Links verfügbar sind oder der Nutzer den Vorgang unterbricht. Nach Abschluss oder Abbruch des Vorgangs werden die gesammelten Ergebnisse als Diagramme anschaulich präsentiert. Der Nutzer bekommt einen allgemeinen Überblick über den abgeschlossenen Vorgang, kann aber auch einzelne Domains bei Interesse genauer untersuchen & sich die Ergebnisse präsentieren lassen. Abgeschlossene oder abgebrochene Vorgänge lassen sich dabei ebenfalls zwischenspeichern & laden. Unterbrochene Vorgänge lassen sich somit zu einem späteren Zeitpunkt weiterführen.
 ## Bedienung
 Um den Crawl-Vorgang starten zu können, hat man zunächst zwei Optionen:
 - eine bestehende Session zu laden
@@ -15,6 +15,18 @@ Durch Klicken auf den __Start__ Button im oberen Bereich des Crawlers wird der C
 
 Falls der Vorgang unterbrochen wird oder alle __URLs__ der Domäne erfolgreich untersucht wurden, wird im mittleren Feld das Ergebnis der Session ausgegeben. Dieses lässt sich durch Klicken auf den __Save__ Button im unteren Bereich des Crawlers in einer JSON-Datei speichern.
 
+## Entwicklerteam
+Der Cookie Tracker wurde von Leon George & Jan Geicke als Projekt für das Modul "CS2366 Datenschutz und Datensicherheit" von Tobias Reimann an der Technischen Hochschule Mittelhessen im Sommersemester 2021 entwickelt.
 ## Bibliotheken
-- Bootstrap 5.02
+- Bootstrap
 - Preact
+- JQuery
+- PopperJS
+- Chart.js
+
+## Icons Attribution
+<div>Cookie Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+<div>Settings Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+<div>Main Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

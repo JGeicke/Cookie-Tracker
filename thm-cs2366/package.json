@@ -22,8 +22,11 @@
     "electron": "^11.4.2"
   },
   "dependencies": {
+    "bootstrap": "^5.0.2",
+    "chart.js": "^3.4.0",
     "fs": "0.0.1-security",
     "fs-jetpack": "^4.1.0",
+    "jquery": "^3.6.0",
     "set-cookie-parser": "^2.4.8"
   }
 }
