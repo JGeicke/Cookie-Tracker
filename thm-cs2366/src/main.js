@@ -16,6 +16,8 @@ class Main {
     ipcMain.handle('abortButtonClicked', this.onAbortButtonClicked);
     ipcMain.handle('settingsButtonClicked', this.onSettingsButtonClicked);
     ipcMain.handle('detailsButtonClicked', this.onDetailsButtonClicked);
+
+    this.session = null;
   }
 
   /**
@@ -83,6 +85,7 @@ class Main {
       try{
         let session;
         if(result){
+          console.log('Continue session...');
           session = Session.continueSession(input, result);
         } else if(input !== undefined){
           session = Session.createSession(input);

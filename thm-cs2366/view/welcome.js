@@ -31,7 +31,6 @@ class WelcomePage extends Component {
     this.abortSession = this.abortSession.bind(this);
     this.onInput = this.onInput.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
-    this.onResInput = this.onResInput.bind(this);
     this.loadJsonResult = this.loadJsonResult.bind(this);
     this.saveJsonResult = this.saveJsonResult.bind(this);
     this.settingsClicked = this.settingsClicked.bind(this);
@@ -43,6 +42,8 @@ class WelcomePage extends Component {
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
+
+    this.result = null;
   }
 
   /**
@@ -51,9 +52,6 @@ class WelcomePage extends Component {
    * @param data - session result data
    */
   resultReceived(event, data){
-    // clear header
-    document.getElementById('content').innerHTML = '';
-
     //store result
     this.result = data;
 
@@ -63,6 +61,9 @@ class WelcomePage extends Component {
     domains.forEach((domain) => {
       domainHTML.push(html`<option value=${domain}>${domain}</option>`);
     });
+
+    // clear header
+    document.getElementById('content').innerHTML = '';
 
     // render charts in content
     render(html`
@@ -252,18 +253,11 @@ class WelcomePage extends Component {
     console.log('Input changed: ', event.target.value);
   }
 
-  /**Event handler to handle the "onResInput" event for result textarea. */
-  onResInput(event) {
-    this.setState({
-      html: event.target.value
-    });
-    console.log('Result Input changed: ', event.target.value);
-  }
 
   /**Event handler to handle the "onClick" event.*/
   clickButton() {
     console.log('Button clicked in UI!', this.state.input);
-    ipcRenderer.invoke('buttonClicked', this.state.input, this.state.html);
+    ipcRenderer.invoke('buttonClicked', this.state.input, this.result);
     this.clearInput();
   }
 
@@ -289,11 +283,9 @@ class WelcomePage extends Component {
      if(!result.canceled){
       let path = result.filePaths[0];
       try{
-        let input = jetpack.read(path);
-        this.setState({
-          html: input
-        });
-        console.log(this.state.html);
+        let input = jetpack.read(path, 'jsonWithDates');
+        console.log(input);
+        this.result = input;
       } catch(err){
         console.error(err);
       }
@@ -322,8 +314,13 @@ class WelcomePage extends Component {
     // check if dialog was canceled
     if(!result.canceled){
       let path = result.filePath;
+      // check if result
+      if(this.result === null){
+        console.log('no result to save');
+        return;
+      }
       try{
-        jetpack.writeAsync(path, this.state.html);
+        jetpack.writeAsync(path, this.result);
       } catch(err){
         console.error(err);
       }
@@ -357,7 +354,6 @@ class WelcomePage extends Component {
     let key = document.getElementById('domainSelection').value;
     let cookies;
     if(key === 'all'){
-      // TODO: handle 'all'
       cookies = this.result.results;
     } else{
       // get cookies of domain

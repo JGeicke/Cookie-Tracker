@@ -79,9 +79,8 @@ class Session {
 		 * @returns new session based on result
 		 */
 		continueSession(url, result) {
-				let session;
+				let session = result;
 				try {
-						session = JSON.parse(result);
 						if (url && !session.urls_done.includes(url) && !session.urls.includes(url)) {
 								session.urls.push(url);
 						} else {
