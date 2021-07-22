@@ -95,7 +95,7 @@ class WelcomePage extends Component {
     <div class="col-sm-3 text-center">
       <div class="row">
         <div class="col-sm">
-          <button type="button" class="btn prim-btn shadow-none" onClick=${this.showCrawlView}>
+          <button title="Go back" type="button" class="btn prim-btn shadow-none" onClick=${this.showCrawlView}>
             <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/arrow-left-circle-fill.svg"/>
           </button>
         </div>
@@ -372,17 +372,17 @@ class WelcomePage extends Component {
           <div class="col-sm-3 text-center">
             <div class="row">
               <div class="col-sm">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.settingsClicked}>
+                <button title="Settings" type="button" class="btn prim-btn shadow-none" onClick=${this.settingsClicked}>
                   <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/gear-fill.svg"/>
                 </button>
               </div>
               <div class="col-sm">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.loadJsonResult}>
+                <button title="Load session" type="button" class="btn prim-btn shadow-none" onClick=${this.loadJsonResult}>
                   <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/folder-fill.svg"/>
                 </button>
               </div>
               <div class="col-sm">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>
+                <button title="Save session" type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>
                   <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/file-earmark-fill.svg"/>
                 </button>
               </div>
@@ -393,10 +393,10 @@ class WelcomePage extends Component {
           <div class="col-sm-3 text-center">
             <div class="row">
               <div class="col-sm text-center">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.clickButton}>Start</button>
+                <button title="Start session" type="button" class="btn prim-btn shadow-none" onClick=${this.clickButton}>Start</button>
               </div>
               <div class="col-sm text-center">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.abortSession}>Stop</button>
+                <button title="Stop session" type="button" class="btn prim-btn shadow-none" onClick=${this.abortSession}>Stop</button>
               </div>
             </div>
           </div>
