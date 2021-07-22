@@ -31,6 +31,7 @@ class WelcomePage extends Component {
     this.abortSession = this.abortSession.bind(this);
     this.onInput = this.onInput.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
+    this.onStarted = this.onStarted.bind(this);
     this.loadJsonResult = this.loadJsonResult.bind(this);
     this.saveJsonResult = this.saveJsonResult.bind(this);
     this.settingsClicked = this.settingsClicked.bind(this);
@@ -42,6 +43,7 @@ class WelcomePage extends Component {
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
+    ipcRenderer.on('onStarted', this.onStarted);
 
     this.result = null;
   }
@@ -253,6 +255,19 @@ class WelcomePage extends Component {
     console.log('Input changed: ', event.target.value);
   }
 
+  /**Event handler to handle the "onStarted" event when the crawler was started. */
+  onStarted(event){
+
+    // render spinner
+    render(html`
+    <div class="spinner-grow" role="status">
+      <span class="sr-only"></span>
+    </div>
+    <div class="mt-2">
+      <strong>Crawling...</strong>
+    </div>
+  `, document.getElementById('spinner'));
+  }
 
   /**Event handler to handle the "onClick" event.*/
   clickButton() {
@@ -403,7 +418,10 @@ class WelcomePage extends Component {
         </div>
         <div id="content" class="container">
           <div class="row mb-5">
-        </div>
+            <div class="col-sm-2 text-center"></div>
+            <div class="col-sm-8 text-center" id="spinner"></div>
+            <div class="col-sm-2 text-center"></div>
+          </div>
         <div class="row mb-5">
           <div class="col-sm-2 text-center"></div>
           <div class="col-sm-8 text-center">

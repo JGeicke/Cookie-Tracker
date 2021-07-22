@@ -64,6 +64,9 @@ class SmartCrawlerClass {
     this.isRunning = true;
     this.currentSession = input;
 
+    // start spinner
+    e.sender.send('onStarted');
+
     console.log('.crawling');
     while (input.urls.length > 0 || internalURLs.length > 0) {
       // check for abort
