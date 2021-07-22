@@ -22,6 +22,9 @@ class WelcomePage extends Component {
    */
   chart;
 
+  /** path to opened session file*/
+  path;
+
   /**Create new welcome page component */
   constructor(props) {
     super(props);
@@ -48,6 +51,7 @@ class WelcomePage extends Component {
     ipcRenderer.on('onAlert', this.onAlert);
 
     this.result = null;
+    this.path = null;
   }
 
   /**
@@ -335,6 +339,8 @@ class WelcomePage extends Component {
      // check if dialog was canceled
      if(!result.canceled){
       let path = result.filePaths[0];
+      // set path of current session;
+      this.path = path;
       try{
         let input = jetpack.read(path, 'jsonWithDates');
         console.log(input);
@@ -359,12 +365,18 @@ class WelcomePage extends Component {
     }
     // set dialog
     this.dialogOpened = true;
+
     let options = {
       filters: [
         { name: 'All Files', extensions: ['*'] },
         {name: 'JSON', extensions: ['json']}
       ]
     };
+
+    // add path to options if present
+    if(this.path !== null){
+      options.defaultPath = this.path;
+    }
     // show save dialog
     let result = await dialog.showSaveDialog(options);
 
