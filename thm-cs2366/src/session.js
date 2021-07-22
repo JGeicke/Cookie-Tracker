@@ -66,7 +66,7 @@ class Session {
 								results: {}
 						};
 				} catch (err) {
-						console.log('Not a url');
+						console.log('Not a url. Aborting...!');
 						return undefined;
 				}
 		}

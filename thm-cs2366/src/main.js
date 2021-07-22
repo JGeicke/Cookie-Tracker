@@ -87,16 +87,24 @@ class Main {
         if(result){
           console.log('Continue session...');
           session = Session.continueSession(input, result);
+          if(session === undefined){
+            e.sender.send('onAlert', 'Loaded session is not valid!');
+            console.error('Session is undefined\nAborting...!');
+            return;
+          }
         } else if(input !== undefined){
           session = Session.createSession(input);
+          if(session === undefined){
+            e.sender.send('onAlert', 'Invalid URL!');
+            return;
+          }
         }else {
-          throw new Error('Input & Result were undefined');
-        }
-        console.log(`start crawling`);
-        if(session === undefined){
-          console.log('Session is undefined\nAborting...!');
+          console.error('Input & Result were undefined');
+          // display error
+          e.sender.send('onAlert', 'Please supply input or load exisiting session!');
           return;
         }
+        console.log(`start crawling`);
         session = await SmartCrawler.crawl(e, session);
 
         // display result in frontend

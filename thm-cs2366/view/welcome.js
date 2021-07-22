@@ -32,6 +32,7 @@ class WelcomePage extends Component {
     this.onInput = this.onInput.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
     this.onStarted = this.onStarted.bind(this);
+    this.onAlert = this.onAlert.bind(this);
     this.loadJsonResult = this.loadJsonResult.bind(this);
     this.saveJsonResult = this.saveJsonResult.bind(this);
     this.settingsClicked = this.settingsClicked.bind(this);
@@ -44,6 +45,7 @@ class WelcomePage extends Component {
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
     ipcRenderer.on('onStarted', this.onStarted);
+    ipcRenderer.on('onAlert', this.onAlert);
 
     this.result = null;
   }
@@ -110,7 +112,11 @@ class WelcomePage extends Component {
     <div class="col-sm-6 text-center">
       <h3>Results</h3>
     </div>
-    <div class="col-sm-3 text-center"></div>
+    <div class="col-sm-3 text-center">
+      <button title="Save session" type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>
+        <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/file-earmark-fill.svg"/>
+      </button>
+    </div>
     `, document.getElementById('header'));
 
     // create chart script
@@ -271,6 +277,36 @@ class WelcomePage extends Component {
   `, document.getElementById('spinner'));
   }
 
+  /**
+   * Create new alert and clear it after timer expires.
+   * @param event - event reference
+   * @param text - text displayed in the alert
+   * @param category - category of the alert
+   */
+  onAlert(event, text, category='error'){
+    let element = document.getElementById('alert-area');
+
+    if(category === 'success'){
+      render(html`
+      <div class="alert alert-success" role="alert">
+        ${text}
+      </div>
+    `, element);
+    } else{
+      render(html`
+      <div class="alert alert-danger" role="alert">
+        ${text}
+      </div>
+    `, element);
+    }
+    setTimeout(this.clearAlert, 5000);
+  }
+
+  /** Clear alert area*/
+  clearAlert(){
+    document.getElementById('alert-area').innerHTML='';
+  }
+
   /**Event handler to handle the "onClick" event.*/
   clickButton() {
     console.log('Button clicked in UI!', this.state.input);
@@ -303,7 +339,11 @@ class WelcomePage extends Component {
         let input = jetpack.read(path, 'jsonWithDates');
         console.log(input);
         this.result = input;
+
+        // successfully loaded session
+        this.onAlert(null, 'Successfully loaded session!', 'success');
       } catch(err){
+        this.onAlert(null, 'Invalid JSON file!');
         console.error(err);
       }
     }
@@ -405,7 +445,7 @@ class WelcomePage extends Component {
               </div>
             </div>
           </div>
-          <div class="col-sm-6 text-center" id="spinner">
+            <div class="col-sm-6 text-center" id="spinner">
           </div>
           <div class="col-sm-3 text-center">
             <div class="row">
@@ -421,7 +461,7 @@ class WelcomePage extends Component {
         <div id="content" class="container">
           <div class="row mb-5">
             <div class="col-sm-2 text-center"></div>
-            <div class="col-sm-8 text-center"></div>
+            <div class="col-sm-8 text-center" id="alert-area"></div>
             <div class="col-sm-2 text-center"></div>
           </div>
         <div class="row mb-5">
