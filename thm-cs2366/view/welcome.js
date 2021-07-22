@@ -230,10 +230,12 @@ class WelcomePage extends Component {
    * Sets the html state to be rendered.
    */
   htmlReceived(event, data) {
+    let output = this.state.html;
+    output = data + '\n' + output;
+
     this.setState({
-        html: data
+        html: output
     });
-    console.log(event, data);
   }
 
   /**Event handler to handle the "onkeyup" event.*/
@@ -403,7 +405,7 @@ class WelcomePage extends Component {
               </div>
             </div>
           </div>
-          <div class="col-sm-6 text-center">
+          <div class="col-sm-6 text-center" id="spinner">
           </div>
           <div class="col-sm-3 text-center">
             <div class="row">
@@ -419,7 +421,7 @@ class WelcomePage extends Component {
         <div id="content" class="container">
           <div class="row mb-5">
             <div class="col-sm-2 text-center"></div>
-            <div class="col-sm-8 text-center" id="spinner"></div>
+            <div class="col-sm-8 text-center"></div>
             <div class="col-sm-2 text-center"></div>
           </div>
         <div class="row mb-5">

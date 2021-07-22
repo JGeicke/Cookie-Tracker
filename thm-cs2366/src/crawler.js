@@ -100,7 +100,7 @@ class SmartCrawlerClass {
         this.currentDomain = new URL(url).hostname;
 
         // display urls in frontend
-        e.sender.send('htmlReceived', JSON.stringify(input.urls_done, null, 2));
+        e.sender.send('htmlReceived', this.currentDomain);
 
         let redirectCount = 0;
         //handle redirects
