@@ -16,6 +16,10 @@ class SmartCrawlerClass {
   /** Domain of the site currently analyzed by the crawler */
   currentDomain = null;
 
+  isDNT;
+
+  isGPC;
+
   /**
    * Create a crawler.
    */
@@ -43,6 +47,16 @@ class SmartCrawlerClass {
       return undefined;
     }
   }
+
+  /* setHeader(DNT, GPC) {
+    if (DNT && (GPC == undefined || !GPC)) {
+      this.isDNT = true;
+      console.log("SET HEADER: Setting DNT to true");
+    } else if (GPC && (DNT == undefined || !DNT)) {
+      this.isGPC = true;
+      console.log("SET HEADER: Setting GPC to true");
+    }
+  } */
 
   /**
    * Parse the result input & create a session based on it.
@@ -311,7 +325,7 @@ class SmartCrawlerClass {
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
       Object.keys(DNT_obj.sessionCookies).length === Object.keys(parsedResult.sessionCookies).length) {
-      console.log("Persistent and session cookies match with and without DNT");
+      console.log("Persistent and session cookies match with and without DNT/GPC");
     } else {
       for (let i = 0; i < Object.keys(DNT_obj.persistentCookies).length; i++) {
         if (!Object.keys(parsedResult.persistentCookies).includes(Object.keys(DNT_obj.persistentCookies)[i])) {
@@ -459,19 +473,41 @@ class SmartCrawlerClass {
    * @param {string} url - The URL to download.
    * @returns {Promise} A promise object with status, headers and content.
    */
-  fetch(url, isDNT) {
+  fetch(url, status) {
     return new Promise((resolve, reject) => {
       console.log('...getting');
       var hostname = new URL(url).hostname;
-      const options = {
+
+      //DNT Header options
+      const DNT_options = {
         hostname: hostname,
         method: 'GET',
         headers: {
           'DNT': 1
         }
       };
-      var value = isDNT ? options : url;
-      console.log('FETCH: DNT is ' + isDNT);
+
+      // GPC Header options
+      const GPC_options = {
+        hostname: hostname,
+        method: 'GET',
+        headers: {
+          'GPC': 1
+        }
+      };
+
+      var value;
+      if (status) {
+        if (this.isDNT) {
+          console.log('Executing fetch with DNT');
+          value = DNT_options;
+        } else {
+          console.log('Executing fetch with GPC');
+          value = GPC_options;
+        }
+      } else {
+        value = url;
+      }
 
       https.get(value, (res) => {
         let data = [];

@@ -1,3 +1,4 @@
+const { ipcRenderer } = require('electron');
 import { Component, html, render } from '../assets/preact.js';
 
 /**
@@ -6,6 +7,26 @@ import { Component, html, render } from '../assets/preact.js';
 class SettingsPage extends Component{
     constructor(props) {
         super(props);
+        
+        //this.setDNT = this.setDNT.bind(this);
+        this.saveButtonClicked = this.saveButtonClicked.bind(this);
+    }
+
+    /* setDNT() {
+        if (document.getElementById('dntHeader').checked) {
+            ipcRenderer.invoke('DNT_Set', true);
+            console.log("Setting DNT Header to true");
+        } else {
+            ipcRenderer.invoke('DNT_Set', false);
+            console.log("Setting DNT Header to false");
+        }  
+    } */
+
+    saveButtonClicked() {
+        var DNT_status = document.getElementById('dntHeader').checked ? true : false;
+        var GPC_status = document.getElementById('gpcHeader').checked ? true : false;
+        console.log('DNT: ' + DNT_status + ' GPC: ' + GPC_status);
+        ipcRenderer.invoke('saveButtonClicked', DNT_status, GPC_status);
     }
 
     /** render the html elements*/
@@ -47,7 +68,7 @@ class SettingsPage extends Component{
                         </div>
                         <div class="col-auto">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="dntHeader" checked />
+                                <input class="form-check-input" type="checkbox" id="dntHeader"/>
                             </div>
                         </div>
                     </div>
@@ -59,7 +80,7 @@ class SettingsPage extends Component{
                         </div>
                         <div class="col-auto">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="gpcHeader" />
+                                <input class="form-check-input" type="checkbox" id="gpcHeader"/>
                             </div>
                         </div>
                     </div>
@@ -97,7 +118,7 @@ class SettingsPage extends Component{
             <div class="row align-items-center mb-3">
                 <div class="col-sm-4 text-center"></div>
                 <div class="col-sm-4 text-center">
-                    <button type="button" class="btn btn-primary shadow-none">Save</button>
+                    <button type="button" onclick=${this.saveButtonClicked} class="btn btn-primary shadow-none">Save</button>
                 </div>
                 <div class="col-sm-4 text-center"></div>
             </div>
