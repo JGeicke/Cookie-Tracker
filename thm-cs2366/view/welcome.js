@@ -1,8 +1,7 @@
 const jetpack = require('fs-jetpack');
 const session = require('../src/session.js');
-import DetailsPage from './details.js';
+const { ipcRenderer } = require('electron');
 import { h, Component, html, render } from '../assets/preact.js';
-
 
 /**Welcome page when the app is started */
 class WelcomePage extends Component {
@@ -16,6 +15,8 @@ class WelcomePage extends Component {
    * session results.
    */
   result;
+
+  settings = {};
 
   /**
    * reference to the chart element.
@@ -40,9 +41,25 @@ class WelcomePage extends Component {
     this.resultReceived = this.resultReceived.bind(this)
     this.showCrawlView = this.showCrawlView.bind(this);
     this.changeChart = this.changeChart.bind(this);
+    this.setSettings = this.setSettings.bind(this);
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
+    ipcRenderer.on('values', this.setSettings);
+  }
+
+
+  setSettings(event, values) {
+    if (values == undefined) {
+      console.log("No preset settings yet");
+      return this.settings;
+    } else {
+      console.log("Setting preset settings");
+      this.settings = {
+       DNT: values.DNT
+     };
+     return this.settings
+    }
   }
 
   /**
@@ -348,7 +365,7 @@ class WelcomePage extends Component {
 
   /** Settings button handler*/
   settingsClicked(){
-    ipcRenderer.invoke('settingsButtonClicked');
+    ipcRenderer.invoke('settingsButtonClicked', JSON.stringify(this.settings));
   }
 
   /** Settings button handler*/

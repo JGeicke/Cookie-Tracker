@@ -16,10 +16,6 @@ class SmartCrawlerClass {
   /** Domain of the site currently analyzed by the crawler */
   currentDomain = null;
 
-  isDNT;
-
-  isGPC;
-
   /**
    * Create a crawler.
    */
@@ -47,16 +43,6 @@ class SmartCrawlerClass {
       return undefined;
     }
   }
-
-  /* setHeader(DNT, GPC) {
-    if (DNT && (GPC == undefined || !GPC)) {
-      this.isDNT = true;
-      console.log("SET HEADER: Setting DNT to true");
-    } else if (GPC && (DNT == undefined || !DNT)) {
-      this.isGPC = true;
-      console.log("SET HEADER: Setting GPC to true");
-    }
-  } */
 
   /**
    * Parse the result input & create a session based on it.
@@ -300,7 +286,11 @@ class SmartCrawlerClass {
     let redirectCount = 0;
     while (download.status !== 200 && redirectCount < maxRedirects) {
       redirectCount++;
-      url = download.redirectURL;
+      if (url == download.redirectURL) {
+        break;
+      } else {
+        url = download.redirectURL;
+      }
       console.log('..fetching redirect ' + url);
       download = await this.fetch(url, true);
     }
@@ -321,7 +311,7 @@ class SmartCrawlerClass {
    * @returns tracking cookies
    */
   compareCookies(DNT_obj, parsedResult) {
-    var tracking = {};
+    var tracking = [];
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
       Object.keys(DNT_obj.sessionCookies).length === Object.keys(parsedResult.sessionCookies).length) {

@@ -14,7 +14,6 @@ class Main {
     ipcMain.handle('abortButtonClicked', this.onAbortButtonClicked);
     ipcMain.handle('settingsButtonClicked', this.onSettingsButtonClicked);
     ipcMain.handle('detailsButtonClicked', this.onDetailsButtonClicked);
-    //ipcMain.handle('DNT_Set', this.onSetDNT);
     ipcMain.handle('saveButtonClicked', this.onSaveButtonClicked);
   }
 
@@ -148,6 +147,7 @@ class Main {
   }
 
   onSaveButtonClicked(e, isDNT, isGPC) {
+    var settings = {};
     if (isGPC && !isDNT) {
       console.log('GPC is set to true');
       SmartCrawler.isGPC = true;
@@ -156,11 +156,12 @@ class Main {
       console.log('DNT is set to true');
       SmartCrawler.isDNT = true;
       SmartCrawler.isGPC = false;
+      //settings.DNT = true;
     } else {
       console.log("Please specify a header");
     }
-    var settingsWindow = BrowserWindow.fromId(2);
-    settingsWindow.close();
+    BrowserWindow.getFocusedWindow().close();
+    //console.log('Saved settings:' + JSON.stringify(this.settings));
   }
 
   /**

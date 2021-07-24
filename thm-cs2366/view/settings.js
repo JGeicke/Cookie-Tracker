@@ -8,19 +8,9 @@ class SettingsPage extends Component{
     constructor(props) {
         super(props);
         
-        //this.setDNT = this.setDNT.bind(this);
         this.saveButtonClicked = this.saveButtonClicked.bind(this);
+        ipcRenderer.on('settings', this.setCheckbox);
     }
-
-    /* setDNT() {
-        if (document.getElementById('dntHeader').checked) {
-            ipcRenderer.invoke('DNT_Set', true);
-            console.log("Setting DNT Header to true");
-        } else {
-            ipcRenderer.invoke('DNT_Set', false);
-            console.log("Setting DNT Header to false");
-        }  
-    } */
 
     saveButtonClicked() {
         var DNT_status = document.getElementById('dntHeader').checked ? true : false;
@@ -28,6 +18,19 @@ class SettingsPage extends Component{
         console.log('DNT: ' + DNT_status + ' GPC: ' + GPC_status);
         ipcRenderer.invoke('saveButtonClicked', DNT_status, GPC_status);
     }
+
+    setCheckbox(event, settings) {
+        console.log("Loading previous settings");
+        if (settings.DNT) {
+            document.getElementById('dntHeader').checked = true;
+        } else if (settings.GPC) {
+            document.getElementById('gpcHeader').checked = true;
+        } else {
+            document.getElementById('dntHeader').checked = false;
+            document.getElementById('gpcHeader').checked = false;
+        }
+      }
+    
 
     /** render the html elements*/
     render() {
