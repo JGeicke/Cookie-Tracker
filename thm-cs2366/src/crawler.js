@@ -16,6 +16,10 @@ class SmartCrawlerClass {
   /** Domain of the site currently analyzed by the crawler */
   currentDomain = null;
 
+  isDNT;
+
+  isGPC;
+
   /**
    * Create a crawler.
    */

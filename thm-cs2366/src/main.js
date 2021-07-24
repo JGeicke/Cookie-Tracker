@@ -144,10 +144,14 @@ class Main {
     child.once('ready-to-show', () => {
       child.show()
     });
+    if (SmartCrawler.isDNT == undefined || SmartCrawler.isGPC == undefined) {
+      console.log("No presets yet");
+    } else {
+      Settings.setCheckbox();
+    }
   }
 
   onSaveButtonClicked(e, isDNT, isGPC) {
-    var settings = {};
     if (isGPC && !isDNT) {
       console.log('GPC is set to true');
       SmartCrawler.isGPC = true;
@@ -156,12 +160,11 @@ class Main {
       console.log('DNT is set to true');
       SmartCrawler.isDNT = true;
       SmartCrawler.isGPC = false;
-      //settings.DNT = true;
     } else {
       console.log("Please specify a header");
     }
     BrowserWindow.getFocusedWindow().close();
-    //console.log('Saved settings:' + JSON.stringify(this.settings));
+    console.log(SmartCrawler.isDNT + ' ' + SmartCrawler.isGPC);
   }
 
   /**

@@ -41,26 +41,22 @@ class WelcomePage extends Component {
     this.resultReceived = this.resultReceived.bind(this)
     this.showCrawlView = this.showCrawlView.bind(this);
     this.changeChart = this.changeChart.bind(this);
-    this.setSettings = this.setSettings.bind(this);
+    //this.setSettings = this.setSettings.bind(this);
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
-    ipcRenderer.on('values', this.setSettings);
+    //ipcRenderer.on('values', this.setSettings);
   }
 
 
-  setSettings(event, values) {
+  /* setSettings(event, values) {
     if (values == undefined) {
       console.log("No preset settings yet");
-      return this.settings;
     } else {
       console.log("Setting preset settings");
-      this.settings = {
-       DNT: values.DNT
-     };
-     return this.settings
+      Preset.setPresetDNT(true);
     }
-  }
+  } */
 
   /**
    * Render the chart view when the session is done or was canceled.
@@ -365,7 +361,7 @@ class WelcomePage extends Component {
 
   /** Settings button handler*/
   settingsClicked(){
-    ipcRenderer.invoke('settingsButtonClicked', JSON.stringify(this.settings));
+    ipcRenderer.invoke('settingsButtonClicked');
   }
 
   /** Settings button handler*/

@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const { SmartCrawler } = require('../src/crawler.js');
 import { Component, html, render } from '../assets/preact.js';
 
 /**
@@ -19,11 +20,11 @@ class SettingsPage extends Component{
         ipcRenderer.invoke('saveButtonClicked', DNT_status, GPC_status);
     }
 
-    setCheckbox(event, settings) {
+    setCheckbox() {
         console.log("Loading previous settings");
-        if (settings.DNT) {
+        if (SmartCrawler.DNT) {
             document.getElementById('dntHeader').checked = true;
-        } else if (settings.GPC) {
+        } else if (SmartCrawler.GPC) {
             document.getElementById('gpcHeader').checked = true;
         } else {
             document.getElementById('dntHeader').checked = false;
