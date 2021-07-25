@@ -153,7 +153,7 @@ class Main {
   }
 
   /**
-   * Sets the values given in the sttings page
+   * Sets the values given in the settings page
    * 
    * @param {*} e Reference to the event
    * @param {*} ua_generic Generic user agent
@@ -164,50 +164,13 @@ class Main {
    * @param {*} isSingle Single page search
    */
   onSaveButtonClicked(e, ua_generic, ua_special, isDNT, isGPC, isBreadth, isSingle) {
-    // Set the user agent
-    if (ua_generic && !ua_special) {
-      console.log('User agent generic is set to true');
-      SmartCrawler.isUaGeneric = true;
-      SmartCrawler.isUaSpecial = false;
-    } else if (ua_special && !ua_generic) {
-      console.log('User agent special is set to true');
-      SmartCrawler.isUaSpecial = true;
-      SmartCrawler.isUaGeneric = false;
-    } else {
-      console.log("No User Agent specified, using default");
-      SmartCrawler.isUaGeneric = true;
-      SmartCrawler.isUaSpecial = false;
-    }
-
-    // Set the header to DNT or GPC
-    if (isGPC && !isDNT) {
-      console.log('GPC is set to true');
-      SmartCrawler.isGPC = true;
-      SmartCrawler.isDNT = false;
-    } else if (isDNT && !isGPC) {
-      console.log('DNT is set to true');
-      SmartCrawler.isDNT = true;
-      SmartCrawler.isGPC = false;
-    } else {
-      console.log("No header specified, using default");
-      SmartCrawler.isGPC = true;
-      SmartCrawler.isDNT = false;
-    }
-
-    // Set crawler behaviour
-    if (isBreadth && !isSingle) {
-      console.log('Breadth is set to true');
-      SmartCrawler.isBreadth = true;
-      SmartCrawler.isSingle = false;
-    } else if (isSingle && !isBreadth) {
-      console.log('Single page is set to true');
-      SmartCrawler.isSingle = true;
-      SmartCrawler.isBreadth = false;
-    } else {
-      console.log("No Crawler behaviour specified, using default");
-      SmartCrawler.isBreadth = true;
-      SmartCrawler.isSingle = false;
-    }
+    SmartCrawler.isUaGeneric = ua_generic;
+    SmartCrawler.isUaSpecial = ua_special;
+    SmartCrawler.isDNT = isDNT;
+    SmartCrawler.isGPC = isGPC;
+    SmartCrawler.isBreadth = isBreadth;
+    SmartCrawler.isSingle = isSingle;
+    // Close window on save button click
     BrowserWindow.getFocusedWindow().close();
   }
 

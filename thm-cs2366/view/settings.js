@@ -12,28 +12,24 @@ class SettingsPage extends Component {
         ipcRenderer.on('settings', this.setCheckboxes);
     }
 
+    /**
+     * Sets the checkboxes according to previous settings
+     * 
+     * @param {*} e Reference to the event
+     * @param {*} settings The settings object with all settings
+     */
     setCheckboxes(e, settings) {
         console.log("Loading previous settings");
-        if (settings.UA_generic) {
-            document.getElementById('user_generic').checked = true;
-        }
-        if (settings.UA_special) {
-            document.getElementById('user_special').checked = true;
-        }
-        if (settings.DNT) {
-            document.getElementById('dntHeader').checked = true;
-        }
-        if (settings.GPC) {
-            document.getElementById('gpcHeader').checked = true;
-        }
-        if (settings.Breadth) {
-            document.getElementById('breadth').checked = true;
-        }
-        if (settings.Single) {
-            document.getElementById('single-page').checked = true;
-        }
+        document.getElementById('user_generic').checked = settings.UA_generic;
+        document.getElementById('user_special').checked = settings.UA_special;
+        document.getElementById('dntHeader').checked = settings.DNT;
+        document.getElementById('gpcHeader').checked = settings.GPC;
+        document.getElementById('breadth').checked = settings.Breadth;
+        document.getElementById('single-page').checked = settings.Single;
     }
-
+    /**
+     * Send all settings to backend on save button click
+     */
     saveButtonClicked() {
         var useragent_generic = document.getElementById('user_generic').checked ? true : false;
         var useragent_special = document.getElementById('user_special').checked ? true : false;

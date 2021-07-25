@@ -23,8 +23,9 @@ class SmartCrawlerClass {
   isDNT;
   /** Check if GPC Header should be used */
   isGPC;
-
+  /** Breadth search */
   isBreadth;
+  /** Single page search */
   isSingle;
 
   /**
@@ -55,6 +56,11 @@ class SmartCrawlerClass {
     }
   }
 
+  /**
+   * Helper function to create a settings object
+   * 
+   * @returns Object with settings
+   */
   createSettings() {
     var settings = {
       UA_generic: this.isUaGeneric,
