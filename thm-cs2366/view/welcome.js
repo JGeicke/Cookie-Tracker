@@ -45,18 +45,7 @@ class WelcomePage extends Component {
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
-    //ipcRenderer.on('values', this.setSettings);
   }
-
-
-  /* setSettings(event, values) {
-    if (values == undefined) {
-      console.log("No preset settings yet");
-    } else {
-      console.log("Setting preset settings");
-      Preset.setPresetDNT(true);
-    }
-  } */
 
   /**
    * Render the chart view when the session is done or was canceled.

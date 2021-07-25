@@ -136,22 +136,50 @@ class Main {
         contextIsolation: false
       }
     });
+
     // load setting html
     child.loadFile('view/settings.html');
-    console.log(child.id);
 
     // show if ready
     child.once('ready-to-show', () => {
-      child.show()
+      child.show();
+      if (SmartCrawler.isDNT == undefined || SmartCrawler.isGPC == undefined) {
+        console.log("No presets yet");
+      } else {
+        console.log("Loading presets");
+        child.webContents.send('settings', SmartCrawler.createSettings());
+      }
     });
-    if (SmartCrawler.isDNT == undefined || SmartCrawler.isGPC == undefined) {
-      console.log("No presets yet");
-    } else {
-      Settings.setCheckbox();
-    }
   }
 
-  onSaveButtonClicked(e, isDNT, isGPC) {
+  /**
+   * Sets the values given in the sttings page
+   * 
+   * @param {*} e Reference to the event
+   * @param {*} ua_generic Generic user agent
+   * @param {*} ua_special Special user agent
+   * @param {*} isDNT Do Not Track Header
+   * @param {*} isGPC GPC Header
+   * @param {*} isBreadth Breadth search
+   * @param {*} isSingle Single page search
+   */
+  onSaveButtonClicked(e, ua_generic, ua_special, isDNT, isGPC, isBreadth, isSingle) {
+    // Set the user agent
+    if (ua_generic && !ua_special) {
+      console.log('User agent generic is set to true');
+      SmartCrawler.isUaGeneric = true;
+      SmartCrawler.isUaSpecial = false;
+    } else if (ua_special && !ua_generic) {
+      console.log('User agent special is set to true');
+      SmartCrawler.isUaSpecial = true;
+      SmartCrawler.isUaGeneric = false;
+    } else {
+      console.log("No User Agent specified, using default");
+      SmartCrawler.isUaGeneric = true;
+      SmartCrawler.isUaSpecial = false;
+    }
+
+    // Set the header to DNT or GPC
     if (isGPC && !isDNT) {
       console.log('GPC is set to true');
       SmartCrawler.isGPC = true;
@@ -161,10 +189,26 @@ class Main {
       SmartCrawler.isDNT = true;
       SmartCrawler.isGPC = false;
     } else {
-      console.log("Please specify a header");
+      console.log("No header specified, using default");
+      SmartCrawler.isGPC = true;
+      SmartCrawler.isDNT = false;
+    }
+
+    // Set crawler behaviour
+    if (isBreadth && !isSingle) {
+      console.log('Breadth is set to true');
+      SmartCrawler.isBreadth = true;
+      SmartCrawler.isSingle = false;
+    } else if (isSingle && !isBreadth) {
+      console.log('Single page is set to true');
+      SmartCrawler.isSingle = true;
+      SmartCrawler.isBreadth = false;
+    } else {
+      console.log("No Crawler behaviour specified, using default");
+      SmartCrawler.isBreadth = true;
+      SmartCrawler.isSingle = false;
     }
     BrowserWindow.getFocusedWindow().close();
-    console.log(SmartCrawler.isDNT + ' ' + SmartCrawler.isGPC);
   }
 
   /**
@@ -195,7 +239,6 @@ class Main {
     });
     // load setting html
     child.loadFile('view/details.html');
-    console.log(child.id);
 
     // show if ready
     child.once('ready-to-show', () => {

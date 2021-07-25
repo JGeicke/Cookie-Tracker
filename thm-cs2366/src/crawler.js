@@ -15,10 +15,17 @@ class SmartCrawlerClass {
   isRunning = false;
   /** Domain of the site currently analyzed by the crawler */
   currentDomain = null;
-
+  /** Generic user agent is used */
+  isUaGeneric;
+  /** Special user agent is used */
+  isUaSpecial;
+  /** Check if DNT Header should be used */
   isDNT;
-
+  /** Check if GPC Header should be used */
   isGPC;
+
+  isBreadth;
+  isSingle;
 
   /**
    * Create a crawler.
@@ -46,6 +53,18 @@ class SmartCrawlerClass {
       console.log('Not a url');
       return undefined;
     }
+  }
+
+  createSettings() {
+    var settings = {
+      UA_generic: this.isUaGeneric,
+      UA_special: this.isUaSpecial,
+      DNT: this.isDNT,
+      GPC: this.isGPC,
+      Breadth: this.isBreadth,
+      Single: this.isSingle
+    };
+    return settings;
   }
 
   /**

@@ -1,37 +1,49 @@
-const { ipcRenderer } = require('electron');
-const { SmartCrawler } = require('../src/crawler.js');
 import { Component, html, render } from '../assets/preact.js';
 
 /**
  *  Component of the crawler settings.
  */
-class SettingsPage extends Component{
+class SettingsPage extends Component {
     constructor(props) {
         super(props);
-        
+
         this.saveButtonClicked = this.saveButtonClicked.bind(this);
-        ipcRenderer.on('settings', this.setCheckbox);
+        this.setCheckboxes = this.setCheckboxes.bind(this);
+        ipcRenderer.on('settings', this.setCheckboxes);
+    }
+
+    setCheckboxes(e, settings) {
+        console.log("Loading previous settings");
+        if (settings.UA_generic) {
+            document.getElementById('user_generic').checked = true;
+        }
+        if (settings.UA_special) {
+            document.getElementById('user_special').checked = true;
+        }
+        if (settings.DNT) {
+            document.getElementById('dntHeader').checked = true;
+        }
+        if (settings.GPC) {
+            document.getElementById('gpcHeader').checked = true;
+        }
+        if (settings.Breadth) {
+            document.getElementById('breadth').checked = true;
+        }
+        if (settings.Single) {
+            document.getElementById('single-page').checked = true;
+        }
     }
 
     saveButtonClicked() {
+        var useragent_generic = document.getElementById('user_generic').checked ? true : false;
+        var useragent_special = document.getElementById('user_special').checked ? true : false;
         var DNT_status = document.getElementById('dntHeader').checked ? true : false;
         var GPC_status = document.getElementById('gpcHeader').checked ? true : false;
-        console.log('DNT: ' + DNT_status + ' GPC: ' + GPC_status);
-        ipcRenderer.invoke('saveButtonClicked', DNT_status, GPC_status);
+        var breadth_status = document.getElementById('breadth').checked ? true : false;
+        var singlepage_status = document.getElementById('single-page').checked ? true : false;
+        //console.log('UA generic:' + useragent_generic + ' UA special: ' + useragent_special + ' DNT: ' + DNT_status + ' GPC: ' + GPC_status);
+        ipcRenderer.invoke('saveButtonClicked', useragent_generic, useragent_special, DNT_status, GPC_status, breadth_status, singlepage_status);
     }
-
-    setCheckbox() {
-        console.log("Loading previous settings");
-        if (SmartCrawler.DNT) {
-            document.getElementById('dntHeader').checked = true;
-        } else if (SmartCrawler.GPC) {
-            document.getElementById('gpcHeader').checked = true;
-        } else {
-            document.getElementById('dntHeader').checked = false;
-            document.getElementById('gpcHeader').checked = false;
-        }
-      }
-    
 
     /** render the html elements*/
     render() {
@@ -46,7 +58,7 @@ class SettingsPage extends Component{
                             Generic
                         </div>
                         <div class="col-auto">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked/>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="user_generic"/>
                         </div>
                     </div>
                 </div>
@@ -56,7 +68,7 @@ class SettingsPage extends Component{
                             Special
                         </div>
                         <div class="col-auto">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"/>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="user_special"/>
                         </div>
                     </div>
                 </div>
@@ -71,9 +83,7 @@ class SettingsPage extends Component{
                             DNT-Header
                         </div>
                         <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="dntHeader"/>
-                            </div>
+                            <input class="form-check-input" name="header" type="radio" id="dntHeader"/>
                         </div>
                     </div>
                 </div>
@@ -83,9 +93,7 @@ class SettingsPage extends Component{
                             GPC-Header
                         </div>
                         <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="gpcHeader"/>
-                            </div>
+                            <input class="form-check-input" name="header" type="radio" id="gpcHeader"/>
                         </div>
                     </div>
                 </div>
@@ -101,7 +109,7 @@ class SettingsPage extends Component{
                         </div>
                         <div class="col-auto">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="behaviour" id="behaviourRadios1" value="breadth" checked/>
+                                <input class="form-check-input" type="radio" name="behaviour" id="breadth" value="breadth"/>
                             </div>
                         </div>
                     </div>
@@ -113,7 +121,7 @@ class SettingsPage extends Component{
                         </div>
                         <div class="col-auto">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="behaviour" id="behaviourRadios2" value="single-page"/>
+                                <input class="form-check-input" type="radio" name="behaviour" id="single-page" value="single-page"/>
                             </div>
                         </div>
                     </div>
@@ -130,5 +138,4 @@ class SettingsPage extends Component{
         `;
     }
 }
-
 render(html`<${SettingsPage} />`, document.body);
