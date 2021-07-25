@@ -53,7 +53,7 @@ class DetailsPage extends Component{
 				let keys = Object.keys(cookies);
 
 				// render title
-				render(html`<strong>All Domains</strong>`, document.getElementById('display-domain'));
+				render(html`<h4 class="mb-0">All Domains</h4>`, document.getElementById('display-domain'));
 
 				// render headers
 				render(html`<tr><th scope="col">Domain</th><th scope="col">Name</th><th scope="col">Value</th></tr>`, document.getElementById('sessionCookie-header'));
@@ -159,7 +159,7 @@ class DetailsPage extends Component{
 				this.cookies = cookies;
 
 				// render title
-				render(html`<strong>${this.title.toString()}</strong>`, document.getElementById('display-domain'));
+				render(html`<h4 class="mb-0">${this.title.toString()} Details</h4>`, document.getElementById('display-domain'));
 
 				// session cookies
 				let keys = Object.keys(this.cookies.sessionCookies);
@@ -235,8 +235,12 @@ class DetailsPage extends Component{
 				console.log('render...'+this.title);
 				return html`
         <div class="container-fluid">
-            <strong class="mb-0">Details</strong>
-            <div id="display-domain"></p>
+            <hr class="my-3" />
+            <div class="row text-center mt-2">
+                <div id="display-domain" class="col-sm">
+                </div>
+            </div>
+            <hr class="my-3" />
             <div class="accordion" id="cookieAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">

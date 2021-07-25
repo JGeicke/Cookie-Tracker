@@ -35,63 +35,15 @@ div {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   user-select: none;
   margin: 0;
-  overflow: hidden;
 }
-body h1,
-html h1,
-div h1 {
-  font-weight: 300;
+th,
+td {
+  color: white;
 }
-body a,
-html a,
-div a {
-  color: var(--accent);
-}
-body .prim-btn,
-html .prim-btn,
-div .prim-btn {
-  color: var(--btn-text);
-  background-color: var(--btn-background);
-  border-color: var(--btn-border);
-}
-body .prim-btn:hover,
-html .prim-btn:hover,
-div .prim-btn:hover {
-  color: var(--btn-text);
-  background-color: var(--btn-hover-background-dark);
-  border-color: var(--btn-hover-border-dark);
-}
-body .prim-btn:focus,
-html .prim-btn:focus,
-div .prim-btn:focus {
-  color: var(--btn-text);
-  background-color: var(--btn-hover-background-dark);
-  border-color: var(--btn-hover-border-dark);
-}
-body .prim-btn:active,
-html .prim-btn:active,
-div .prim-btn:active {
-  color: var(--btn-text);
-  background-color: var(--btn-hover-background-dark);
-  border-color: var(--btn-hover-border-dark);
-}
-.icon {
-  filter: invert(1);
-}
-.log {
-  background-color: white;
-}
-/* Bootstrap override */
-.form-control {
-  border: 1px solid var(--focus-highlight);
-}
-.form-control:focus {
-  border-color: var(--focus-highlight);
-  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
-}
+/* Bootstrap overrides */
 .accordion-button:focus {
   border-color: var(--focus-highlight);
-  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
+  box-shadow: 0 0 0 0.11rem var(--focus-highlight);
 }
 .collapsed {
   background-color: var(--btn-background);
@@ -105,24 +57,12 @@ div .prim-btn:active {
   background-color: var(--accordion-highlight);
   border-color: var(--btn-border);
 }
-.input-group-text {
-  background-color: var(--btn-background);
-  border-color: var(--btn-border);
-  color: white;
-}
 .accordion-item {
   border-color: var(--btn-border);
-}
-.accordion-item:last-of-type {
-  background-color: var(--accordion-highlight);
 }
 .accordion-button::after {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 }
 .accordion-button:not(.collapsed)::after {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-}
-.form-select:focus {
-  border-color: var(--focus-highlight);
-  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
 }

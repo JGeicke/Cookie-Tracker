@@ -1,0 +1,66 @@
+* {
+  --foreground: #434141;
+  --background: #6A7B76;
+  --background2: #3A4E48;
+  /* buttons */
+  --btn-background: #8B9D83;
+  --btn-border: #73866c;
+  --focus-highlight: rgba(162, 182, 152, 0.5);
+  --btn-hover-background: #6b7f64;
+  --btn-hover-border: #73866c;
+  --btn-text: #fff;
+  --hilite1: rgba(255, 255, 255, 0.3);
+  --accent: #007abc;
+  --hr: #cccccc;
+}
+@media (prefers-color-scheme: dark) {
+  * {
+    --foreground: #dfdfdf;
+    --background: #303030;
+    --background2: #464544;
+    --hilite1: rgba(0, 0, 0, 0.2);
+    --hr: #434141;
+  }
+}
+body,
+html,
+div {
+  color: var(--btn-text);
+  background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+  margin: 0;
+}
+/* Bootstrap overrides */
+.list-group-item {
+  background-color: var(--btn-background);
+  border: 1px solid var(--btn-border);
+}
+.col,
+.col-auto,
+.row,
+.form-check {
+  background-color: var(--btn-background);
+}
+.btn-primary {
+  background-color: var(--btn-background);
+  border-color: var(--btn-border);
+}
+.form-check-input {
+  background-color: var(--btn-text);
+}
+.form-check-input:checked {
+  background-color: var(--btn-hover-background);
+  border-color: var(--btn-hover-border);
+}
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
+  border-color: var(--btn-border);
+}
+.form-switch .form-check-input:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+}
+.btn-primary:hover {
+  background-color: var(--btn-hover-background);
+  border-color: var(--btn-hover-border);
+}

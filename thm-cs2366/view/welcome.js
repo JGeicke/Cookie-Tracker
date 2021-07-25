@@ -292,13 +292,13 @@ class WelcomePage extends Component {
 
     if(category === 'success'){
       render(html`
-      <div class="alert alert-success" role="alert">
+      <div class="alert alert-success fade show" role="alert">
         ${text}
       </div>
     `, element);
     } else{
       render(html`
-      <div class="alert alert-danger" role="alert">
+      <div class="alert alert-danger fade show" role="alert">
         ${text}
       </div>
     `, element);
@@ -492,7 +492,7 @@ class WelcomePage extends Component {
           <div class="accordion" id="accordionExample">
             <div class="accordion-item">
               <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" onClick=${this.toggleLog}>
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" onClick=${this.toggleLog}>
                   Log
                 </button>
               </h2>

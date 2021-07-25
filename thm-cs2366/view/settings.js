@@ -12,6 +12,13 @@ class SettingsPage extends Component{
     render() {
         return html`
         <div class="container-fluid">
+            <hr class="my-3" />
+            <div class="row text-center mt-2">
+                <div class="col-sm">
+                    <strong class="mb-0">Cookie Tracker Settings</strong>
+                </div>
+            </div>
+            <hr class="my-3" />
             <strong class="mb-0">User Agent</strong>
             <p>Select the type of user agent used by the crawler.</p>
             <div class="list-group mb-4 shadow">
