@@ -36,123 +36,12 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Create a new session object.
-   * @param {*} url - First url to add to session
-   * @returns new session object
-   */
-  createSession(url) {
-    try {
-      new URL(url);
-      return {
-        start: new Date(),
-        end: '',
-        urls: [url],
-        urls_done: [],
-        results: {}
-      };
-    } catch (err) {
-      console.log('Not a url');
-      return undefined;
-    }
-  }
-
-  /**
-   * Helper function to create a settings object
-   * 
-   * @returns Object with settings
-   */
-  createSettings() {
-    var settings = {
-      UA_generic: this.isUaGeneric,
-      UA_special: this.isUaSpecial,
-      DNT: this.isDNT,
-      GPC: this.isGPC,
-      Breadth: this.isBreadth,
-      Single: this.isSingle
-    };
-    return settings;
-  }
-
-  /**
-   * Parse the result input & create a session based on it.
-   * Add the url input to the session if the url has not been explored yet.
-   * @param {*} url - url input
-   * @param {*} result - json result input of a session
-   * @returns new session based on result
-   */
-  continueSession(url, result) {
-    let session;
-    try {
-      session = JSON.parse(result);
-      if (url && !session.urls_done.includes(url) && !session.urls.includes(url)) {
-        session.urls.push(url);
-      } else {
-        console.log('no url defined or already visited.');
-      }
-
-      // check parsed session
-      if (this.checkParsedSession(session)) {
-        return session;
-      }
-      // abort later if session is undefined
-      return undefined;
-    } catch (err) {
-      console.error(err);
-      console.log('Illegal session\nStarting new session...');
-      if (url) {
-        session = this.createSession(url);
-        return session;
-      }
-      // abort later if session is undefined
-      return undefined;
-    }
-  }
-
-  /**
    * Abort current session if the crawler is crawling.
    */
   abortSession() {
     if (this.isRunning) {
       this.abort = true;
     }
-  }
-
-  /**
-   * Check if parsed session matches the needed session structure
-   * @param {*} session - parsed session to check
-   * @returns if the session matches the needed structure
-   */
-  checkParsedSession(session) {
-    let neededAttrs = ['start', 'end', 'urls', 'urls_done'];
-    let neededResultAttrs = ['persistentCookies', 'sessionCookies', 'trackingCookies'];
-
-    // check needed outer attributes
-    for (let i = 0; i < neededAttrs.length; i++) {
-      if (session[neededAttrs[i]] === undefined) {
-        return false;
-      }
-    }
-    // check results
-    let res = session['results'];
-    console.log(res);
-    if (res === undefined) {
-      return false;
-    }
-
-    // check needed result domain objects
-    let resultDomainObjects = Object.keys(res);
-    for (let i = 0; i < resultDomainObjects.length; i++) {
-      // get result domain object
-      let resultDomainObject = res[resultDomainObjects[i]];
-
-      // iterate needed attributes of result domain object
-      for (let k = 0; k < neededResultAttrs.length; k++) {
-        if (resultDomainObject[neededResultAttrs[k]] === undefined) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 
   /**
@@ -187,6 +76,9 @@ class SmartCrawlerClass {
     this.isRunning = true;
     this.currentSession = input;
 
+    // start spinner
+    e.sender.send('onStarted');
+
     console.log('.crawling');
     while (input.urls.length > 0 || internalURLs.length > 0) {
       // check for abort
@@ -220,7 +112,7 @@ class SmartCrawlerClass {
         this.currentDomain = new URL(url).hostname;
 
         // display urls in frontend
-        e.sender.send('htmlReceived', JSON.stringify(input.urls_done, null, 2));
+        e.sender.send('htmlReceived', this.currentDomain);
 
         let redirectCount = 0;
         //handle redirects
@@ -393,7 +285,16 @@ class SmartCrawlerClass {
     // categorize cookies
     cookies.forEach(cookie => {
       // check "expires" of cookie & categorize them
-      if (cookie.expires !== undefined) {
+      if (cookie.maxAge !== undefined || cookie.expires !== undefined) {
+        // calculate expires if not set
+        if(cookie.expires === undefined){
+          let date = new Date();
+          let currSecs = date.getSeconds();
+          date.setSeconds(currSecs + cookie.maxAge);
+
+          // set expires for later display
+          cookie.expires = date.getSeconds();
+        }
         result.persistentCookies[cookie.name] = cookie;
       } else {
         result.sessionCookies[cookie.name] = cookie;

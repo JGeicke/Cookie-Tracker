@@ -1,26 +1,6 @@
+@import "styles/colors.less";
+
 body, html, div {
-    --foreground: #434141;
-    --background: #6A7B76;
-    --background2: #3A4E48;
-
-    /* buttons */
-    --btn-background: #8B9D83;
-    --btn-border: #73866c;
-
-    @btn-hover-background: #6b7f64;
-    @btn-hover-border: #73866c;
-
-    --btn-text: #fff;
-    --hilite1: rgba(255,255,255,0.3);
-    --accent: #007abc;
-    --hr: #cccccc;
-    @media (prefers-color-scheme: dark) {
-        --foreground: #dfdfdf;
-        --background: #303030;
-        --background2: #464544;
-        --hilite1: rgba(0,0,0,0.2);
-        --hr: #434141;
-    }
     color: var(--btn-text);
     background-color: var(--background);
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,20 +23,20 @@ body, html, div {
 
         &:hover{
             color: var(--btn-text);
-            background-color: darken(@btn-hover-background, 2%);
-            border-color: darken(@btn-hover-border, 2%);
+            background-color: var(--btn-hover-background-dark);
+            border-color: var(--btn-hover-border-dark);
         }
 
         &:focus{
             color: var(--btn-text);
-            background-color: darken(@btn-hover-background, 2%);
-            border-color: darken(@btn-hover-border, 2%);
+            background-color: var(--btn-hover-background-dark);
+            border-color: var(--btn-hover-border-dark);
         }
 
         &:active{
             color: var(--btn-text);
-            background-color: darken(@btn-hover-background, 4%);
-            border-color: darken(@btn-hover-border, 4%);
+            background-color: var(--btn-hover-background-dark);
+            border-color: var(--btn-hover-border-dark);
         }
     }
 }
@@ -66,4 +46,61 @@ body, html, div {
 
 .log{
     background-color: white;
+}
+
+/* Bootstrap override */
+.form-control{
+    border: 1px solid var(--focus-highlight);
+}
+
+.form-control:focus{
+    border-color: var(--focus-highlight);
+    box-shadow: 0 0 0 0.25rem var(--focus-highlight);
+}
+
+.accordion-button:focus{
+    border-color: var(--focus-highlight);
+    box-shadow: 0 0 0 0.25rem var(--focus-highlight);
+}
+
+.collapsed{
+    background-color: var(--btn-background);
+    border-color: var(--btn-border);
+}
+
+.accordion-button{
+    color: white;
+}
+
+.accordion-button:not(.collapsed) {
+    color: white;
+    background-color: var(--accordion-highlight);
+    border-color: var(--btn-border);
+}
+
+.input-group-text{
+    background-color: var(--btn-background);
+    border-color: var(--btn-border);
+    color: white;
+}
+
+.accordion-item {
+    border-color: var(--btn-border);
+}
+
+.accordion-item:last-of-type {
+    background-color: var(--accordion-highlight);
+}
+
+.accordion-button::after{
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.form-select:focus{
+    border-color: var(--focus-highlight);
+    box-shadow: 0 0 0 0.25rem var(--focus-highlight);
 }

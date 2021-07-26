@@ -21,6 +21,9 @@ class WelcomePage extends Component {
    */
   chart;
 
+  /** path to opened session file*/
+  path;
+
   /**Create new welcome page component */
   constructor(props) {
     super(props);
@@ -30,7 +33,8 @@ class WelcomePage extends Component {
     this.abortSession = this.abortSession.bind(this);
     this.onInput = this.onInput.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
-    this.onResInput = this.onResInput.bind(this);
+    this.onStarted = this.onStarted.bind(this);
+    this.onAlert = this.onAlert.bind(this);
     this.loadJsonResult = this.loadJsonResult.bind(this);
     this.saveJsonResult = this.saveJsonResult.bind(this);
     this.settingsClicked = this.settingsClicked.bind(this);
@@ -43,6 +47,11 @@ class WelcomePage extends Component {
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
+    ipcRenderer.on('onStarted', this.onStarted);
+    ipcRenderer.on('onAlert', this.onAlert);
+
+    this.result = null;
+    this.path = null;
   }
 
   /**
@@ -51,9 +60,6 @@ class WelcomePage extends Component {
    * @param data - session result data
    */
   resultReceived(event, data){
-    // clear header
-    document.getElementById('content').innerHTML = '';
-
     //store result
     this.result = data;
 
@@ -63,6 +69,9 @@ class WelcomePage extends Component {
     domains.forEach((domain) => {
       domainHTML.push(html`<option value=${domain}>${domain}</option>`);
     });
+
+    // clear header
+    document.getElementById('content').innerHTML = '';
 
     // render charts in content
     render(html`
@@ -94,7 +103,7 @@ class WelcomePage extends Component {
     <div class="col-sm-3 text-center">
       <div class="row">
         <div class="col-sm">
-          <button type="button" class="btn prim-btn shadow-none" onClick=${this.showCrawlView}>
+          <button title="Go back" type="button" class="btn prim-btn shadow-none" onClick=${this.showCrawlView}>
             <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/arrow-left-circle-fill.svg"/>
           </button>
         </div>
@@ -107,7 +116,11 @@ class WelcomePage extends Component {
     <div class="col-sm-6 text-center">
       <h3>Results</h3>
     </div>
-    <div class="col-sm-3 text-center"></div>
+    <div class="col-sm-3 text-center">
+      <button title="Save session" type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>
+        <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/file-earmark-fill.svg"/>
+      </button>
+    </div>
     `, document.getElementById('header'));
 
     // create chart script
@@ -227,10 +240,12 @@ class WelcomePage extends Component {
    * Sets the html state to be rendered.
    */
   htmlReceived(event, data) {
+    let output = this.state.html;
+    output = data + '\n' + output;
+
     this.setState({
-        html: data
+        html: output
     });
-    console.log(event, data);
   }
 
   /**Event handler to handle the "onkeyup" event.*/
@@ -252,18 +267,54 @@ class WelcomePage extends Component {
     console.log('Input changed: ', event.target.value);
   }
 
-  /**Event handler to handle the "onResInput" event for result textarea. */
-  onResInput(event) {
-    this.setState({
-      html: event.target.value
-    });
-    console.log('Result Input changed: ', event.target.value);
+  /**Event handler to handle the "onStarted" event when the crawler was started. */
+  onStarted(event){
+
+    // render spinner
+    render(html`
+    <div class="spinner-grow" role="status">
+      <span class="sr-only"></span>
+    </div>
+    <div class="mt-2">
+      <strong>Crawling...</strong>
+    </div>
+  `, document.getElementById('spinner'));
+  }
+
+  /**
+   * Create new alert and clear it after timer expires.
+   * @param event - event reference
+   * @param text - text displayed in the alert
+   * @param category - category of the alert
+   */
+  onAlert(event, text, category='error'){
+    let element = document.getElementById('alert-area');
+
+    if(category === 'success'){
+      render(html`
+      <div class="alert alert-success fade show" role="alert">
+        ${text}
+      </div>
+    `, element);
+    } else{
+      render(html`
+      <div class="alert alert-danger fade show" role="alert">
+        ${text}
+      </div>
+    `, element);
+    }
+    setTimeout(this.clearAlert, 5000);
+  }
+
+  /** Clear alert area*/
+  clearAlert(){
+    document.getElementById('alert-area').innerHTML='';
   }
 
   /**Event handler to handle the "onClick" event.*/
   clickButton() {
     console.log('Button clicked in UI!', this.state.input);
-    ipcRenderer.invoke('buttonClicked', this.state.input, this.state.html);
+    ipcRenderer.invoke('buttonClicked', this.state.input, this.result);
     this.clearInput();
   }
 
@@ -288,13 +339,17 @@ class WelcomePage extends Component {
      // check if dialog was canceled
      if(!result.canceled){
       let path = result.filePaths[0];
+      // set path of current session;
+      this.path = path;
       try{
-        let input = jetpack.read(path);
-        this.setState({
-          html: input
-        });
-        console.log(this.state.html);
+        let input = jetpack.read(path, 'jsonWithDates');
+        console.log(input);
+        this.result = input;
+
+        // successfully loaded session
+        this.onAlert(null, 'Successfully loaded session!', 'success');
       } catch(err){
+        this.onAlert(null, 'Invalid JSON file!');
         console.error(err);
       }
     }
@@ -310,20 +365,31 @@ class WelcomePage extends Component {
     }
     // set dialog
     this.dialogOpened = true;
+
     let options = {
       filters: [
         { name: 'All Files', extensions: ['*'] },
         {name: 'JSON', extensions: ['json']}
       ]
     };
+
+    // add path to options if present
+    if(this.path !== null){
+      options.defaultPath = this.path;
+    }
     // show save dialog
     let result = await dialog.showSaveDialog(options);
 
     // check if dialog was canceled
     if(!result.canceled){
       let path = result.filePath;
+      // check if result
+      if(this.result === null){
+        console.log('no result to save');
+        return;
+      }
       try{
-        jetpack.writeAsync(path, this.state.html);
+        jetpack.writeAsync(path, this.result);
       } catch(err){
         console.error(err);
       }
@@ -357,7 +423,6 @@ class WelcomePage extends Component {
     let key = document.getElementById('domainSelection').value;
     let cookies;
     if(key === 'all'){
-      // TODO: handle 'all'
       cookies = this.result.results;
     } else{
       // get cookies of domain
@@ -376,38 +441,41 @@ class WelcomePage extends Component {
           <div class="col-sm-3 text-center">
             <div class="row">
               <div class="col-sm">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.settingsClicked}>
+                <button title="Settings" type="button" class="btn prim-btn shadow-none" onClick=${this.settingsClicked}>
                   <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/gear-fill.svg"/>
                 </button>
               </div>
               <div class="col-sm">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.loadJsonResult}>
+                <button title="Load session" type="button" class="btn prim-btn shadow-none" onClick=${this.loadJsonResult}>
                   <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/folder-fill.svg"/>
                 </button>
               </div>
               <div class="col-sm">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>
+                <button title="Save session" type="button" class="btn prim-btn shadow-none" onClick=${this.saveJsonResult}>
                   <img class="icon" src="../assets/bootstrap/bootstrap-icons-1.5.0/file-earmark-fill.svg"/>
                 </button>
               </div>
             </div>
           </div>
-          <div class="col-sm-6 text-center">
+            <div class="col-sm-6 text-center" id="spinner">
           </div>
           <div class="col-sm-3 text-center">
             <div class="row">
               <div class="col-sm text-center">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.clickButton}>Start</button>
+                <button title="Start session" type="button" class="btn prim-btn shadow-none" onClick=${this.clickButton}>Start</button>
               </div>
               <div class="col-sm text-center">
-                <button type="button" class="btn prim-btn shadow-none" onClick=${this.abortSession}>Stop</button>
+                <button title="Stop session" type="button" class="btn prim-btn shadow-none" onClick=${this.abortSession}>Stop</button>
               </div>
             </div>
           </div>
         </div>
         <div id="content" class="container">
           <div class="row mb-5">
-        </div>
+            <div class="col-sm-2 text-center"></div>
+            <div class="col-sm-8 text-center" id="alert-area"></div>
+            <div class="col-sm-2 text-center"></div>
+          </div>
         <div class="row mb-5">
           <div class="col-sm-2 text-center"></div>
           <div class="col-sm-8 text-center">
@@ -424,7 +492,7 @@ class WelcomePage extends Component {
           <div class="accordion" id="accordionExample">
             <div class="accordion-item">
               <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" onClick=${this.toggleLog}>
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" onClick=${this.toggleLog}>
                   Log
                 </button>
               </h2>

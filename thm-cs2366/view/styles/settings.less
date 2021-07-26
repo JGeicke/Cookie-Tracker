@@ -1,0 +1,55 @@
+@import "colors.less";
+body, html, div {
+  color: var(--btn-text);
+  background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+  margin: 0;
+}
+
+/* Bootstrap overrides */
+.list-group-item {
+  background-color: var(--btn-background);
+  border: 1px solid var(--btn-border);
+}
+
+.col, .col-auto, .row, .form-check{
+  background-color: var(--btn-background);
+}
+
+.btn-primary {
+  background-color: var(--btn-background);
+  border-color: var(--btn-border);
+}
+
+.form-check-input{
+  background-color: var(--btn-text);
+}
+
+.form-check-input:checked {
+  background-color: var(--btn-hover-background);
+  border-color: var(--btn-hover-border);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
+  border-color: var(--btn-border);
+}
+
+.form-switch .form-check-input:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--btn-hover-background);
+  border-color: var(--btn-hover-border);
+}
+
+.form-control{
+  border: 1px solid var(--focus-highlight);
+}
+
+.form-control:focus{
+  border-color: var(--focus-highlight);
+  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
+}

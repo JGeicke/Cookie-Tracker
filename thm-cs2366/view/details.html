@@ -5,11 +5,14 @@
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' cdn.jsdelivr.net;" />
   <title>Details</title>
   <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="styles/details.css">
   <script>
     const { ipcRenderer} = require('electron');
     const { dialog } = require('electron').remote;
     const { app } = require("electron").remote;
     const appVersion = app.getVersion();
+    const electron = require('electron');
+    const remote = electron.remote;
   </script>
   <script type="module" src="details.js"></script>
 </head>
