@@ -232,25 +232,30 @@ class SmartCrawlerClass {
    * @returns tracking cookies
    */
   compareCookies(DNT_obj, parsedResult) {
-    var tracking = [];
+    let tracking = {};
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
       Object.keys(DNT_obj.sessionCookies).length === Object.keys(parsedResult.sessionCookies).length) {
       console.log("Persistent and session cookies match with and without DNT/GPC");
     } else {
-      for (let i = 0; i < Object.keys(DNT_obj.persistentCookies).length; i++) {
-        if (!Object.keys(parsedResult.persistentCookies).includes(Object.keys(DNT_obj.persistentCookies)[i])) {
-          console.log("Found something!");
-          tracking.push(DNT_obj.persistentCookies[i]);
-        }
-      }
 
-      for (let i = 0; i < Object.keys(DNT_obj.sessionCookies).length; i++) {
-        if (!Object.keys(parsedResult.sessionCookies).includes(Object.keys(DNT_obj.sessionCookies)[i])) {
+      let dntPersistentCookieNames = Object.keys(DNT_obj.persistentCookies);
+
+      dntPersistentCookieNames.forEach((name)=>{
+        if(parsedResult.persistentCookies[name] === undefined){
           console.log("Found something!");
-          tracking.push(DNT_obj.sessionCookies[i]);
+          tracking[name] = DNT_obj.persistentCookies[name];
         }
-      }
+      });
+
+      let dntSessionCookieNames = Object.keys(DNT_obj.sessionCookies);
+
+      dntSessionCookieNames.forEach((name)=>{
+        if(parsedResult.sessionCookies[name] === undefined){
+          console.log("Found something!");
+          tracking[name] = DNT_obj.sessionCookies[name];
+        }
+      });
     }
     return tracking;
   }
