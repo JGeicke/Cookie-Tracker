@@ -18,6 +18,7 @@ class DetailsPage extends Component{
 		constructor(props) {
 				super(props);
 				this.detailsReceived = this.detailsReceived.bind(this);
+				this.closeWindow = this.closeWindow.bind(this);
 				ipcRenderer.on('detailsReceived', this.detailsReceived);
 		}
 
@@ -308,8 +309,19 @@ class DetailsPage extends Component{
                     </div>
                 </div>
             </div>
+            <div class="row text-center mt-3">
+                <div class="col-sm">
+                    <button type="button" class="btn btn-primary shadow-none" onClick=${this.closeWindow}>Close</button>
+                </div>
+            </div>
         </div>
         `;
+		}
+
+		/** close window*/
+		closeWindow(){
+				let window = remote.getCurrentWindow();
+				window.close();
 		}
 }
 render(html`<${DetailsPage} />`, document.body);

@@ -1,14 +1,19 @@
 * {
+  /*custom colors*/
   --foreground: #434141;
   --background: #6A7B76;
   --background2: #3A4E48;
   /* buttons */
   --btn-background: #8B9D83;
   --btn-border: #73866c;
-  --focus-highlight: rgba(162, 182, 152, 0.5);
+  --focus-highlight: rgba(161, 186, 145, 0.5);
+  --accordion-highlight: #99af8b;
   --btn-hover-background: #6b7f64;
   --btn-hover-border: #73866c;
+  --btn-hover-background-dark: #667960;
+  --btn-hover-border-dark: #6e8067;
   --btn-text: #fff;
+  /*pre defined*/
   --hilite1: rgba(255, 255, 255, 0.3);
   --accent: #007abc;
   --hr: #cccccc;
@@ -60,7 +65,15 @@ div {
 .form-switch .form-check-input:focus {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
 }
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary:focus {
   background-color: var(--btn-hover-background);
   border-color: var(--btn-hover-border);
+}
+.form-control {
+  border: 1px solid var(--focus-highlight);
+}
+.form-control:focus {
+  border-color: var(--focus-highlight);
+  box-shadow: 0 0 0 0.25rem var(--focus-highlight);
 }

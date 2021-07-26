@@ -25,7 +25,7 @@ class SettingsPage extends Component{
                 <div class="list-group-item">
                     <div class="row align-items-center">
                         <div class="col">
-                            Generic
+                            Standard
                         </div>
                         <div class="col-auto">
                             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked/>
@@ -35,7 +35,8 @@ class SettingsPage extends Component{
                 <div class="list-group-item">
                     <div class="row align-items-center">
                         <div class="col">
-                            Special
+                            <p class="mb-1">Custom</p>
+                            <input type="text"  class="form-control" id="inlineFormInputGroup" placeholder="Custom User Agent"/>
                         </div>
                         <div class="col-auto">
                             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"/>
@@ -53,9 +54,7 @@ class SettingsPage extends Component{
                             DNT-Header
                         </div>
                         <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="dntHeader" checked />
-                            </div>
+                            <input class="form-check-input" name="header" type="radio" id="dntHeader"/>
                         </div>
                     </div>
                 </div>
@@ -65,9 +64,7 @@ class SettingsPage extends Component{
                             GPC-Header
                         </div>
                         <div class="col-auto">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="gpcHeader" />
-                            </div>
+                            <input class="form-check-input" name="header" type="radio" id="gpcHeader"/>
                         </div>
                     </div>
                 </div>
