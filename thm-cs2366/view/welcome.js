@@ -1,8 +1,7 @@
 const jetpack = require('fs-jetpack');
 const session = require('../src/session.js');
-import DetailsPage from './details.js';
+const { ipcRenderer } = require('electron');
 import { h, Component, html, render } from '../assets/preact.js';
-
 
 /**Welcome page when the app is started */
 class WelcomePage extends Component {
@@ -40,6 +39,7 @@ class WelcomePage extends Component {
     this.resultReceived = this.resultReceived.bind(this)
     this.showCrawlView = this.showCrawlView.bind(this);
     this.changeChart = this.changeChart.bind(this);
+    //this.setSettings = this.setSettings.bind(this);
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
