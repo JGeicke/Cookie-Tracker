@@ -16,8 +16,6 @@ class WelcomePage extends Component {
    */
   result;
 
-  settings = {};
-
   /**
    * reference to the chart element.
    */
