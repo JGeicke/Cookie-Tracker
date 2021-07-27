@@ -1,8 +1,8 @@
 {
   "name": "smart-crawler",
   "version": "1.0.0",
-  "productName": "Crawler",
-  "description": "Crawl the net",
+  "productName": "Cookie Tracker",
+  "description": "Categorize the cookies of websites and analyze the adoption of tracking headers.",
   "main": "src/main.js",
   "scripts": {
     "start": "electron ."
@@ -19,7 +19,8 @@
     "url": "https://www.tobias-reimann.com"
   },
   "devDependencies": {
-    "electron": "^11.4.2"
+    "electron": "^11.4.2",
+    "electron-packager": "^15.3.0"
   },
   "dependencies": {
     "bootstrap": "^5.0.2",
