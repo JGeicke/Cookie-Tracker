@@ -154,12 +154,7 @@ class Main {
     // show if ready
     child.once('ready-to-show', () => {
       child.show();
-      if (SmartCrawler.isDNT == undefined || SmartCrawler.isGPC == undefined) {
-        console.log("No presets yet");
-      } else {
-        console.log("Loading presets");
-        child.webContents.send('settings', SmartCrawler.createSettings());
-      }
+      child.webContents.send('settings', SmartCrawler.createSettings());
     });
   }
 
@@ -169,14 +164,17 @@ class Main {
    * @param {*} e Reference to the event
    * @param {*} ua_generic Generic user agent
    * @param {*} ua_special Special user agent
+   * @param {*} custom_ua The custom user agent string
    * @param {*} isDNT Do Not Track Header
    * @param {*} isGPC GPC Header
    * @param {*} isBreadth Breadth search
    * @param {*} isSingle Single page search
    */
-  onSaveButtonClicked(e, ua_generic, ua_special, isDNT, isGPC, isBreadth, isSingle) {
+  onSaveButtonClicked(e, ua_generic, ua_special, custom_ua, isDNT, isGPC, isBreadth, isSingle) {
     SmartCrawler.isUaGeneric = ua_generic;
     SmartCrawler.isUaSpecial = ua_special;
+    SmartCrawler.custom_ua = custom_ua;
+    console.log('CUSTOM user agent: ' + custom_ua);
     SmartCrawler.isDNT = isDNT;
     SmartCrawler.isGPC = isGPC;
     SmartCrawler.isBreadth = isBreadth;

@@ -1,3 +1,4 @@
+const { ipcRenderer } = require('electron');
 import { Component, html, render } from '../assets/preact.js';
 
 /**
@@ -7,8 +8,11 @@ class SettingsPage extends Component {
     constructor(props) {
         super(props);
 
-        this.saveButtonClicked = this.saveButtonClicked.bind(this);
         this.setCheckboxes = this.setCheckboxes.bind(this);
+        this.saveButtonClicked = this.saveButtonClicked.bind(this);
+        this.onInput = this.onInput.bind(this);
+        this.toggleInput = this.toggleInput.bind(this);
+        this.clearInput = this.clearInput.bind(this);
         ipcRenderer.on('settings', this.setCheckboxes);
     }
 
@@ -20,8 +24,8 @@ class SettingsPage extends Component {
      */
     setCheckboxes(e, settings) {
         console.log("Loading previous settings");
-        document.getElementById('user_generic').checked = settings.UA_generic;
-        document.getElementById('user_special').checked = settings.UA_special;
+        document.getElementById('user_generic').checked = settings.Generic;
+        document.getElementById('user_special').checked = settings.Special;
         document.getElementById('dntHeader').checked = settings.DNT;
         document.getElementById('gpcHeader').checked = settings.GPC;
         document.getElementById('breadth').checked = settings.Breadth;
@@ -38,8 +42,32 @@ class SettingsPage extends Component {
         var breadth_status = document.getElementById('breadth').checked ? true : false;
         var singlepage_status = document.getElementById('single-page').checked ? true : false;
         //console.log('UA generic:' + useragent_generic + ' UA special: ' + useragent_special + ' DNT: ' + DNT_status + ' GPC: ' + GPC_status);
-        ipcRenderer.invoke('saveButtonClicked', useragent_generic, useragent_special, DNT_status, GPC_status, breadth_status, singlepage_status);
+        ipcRenderer.invoke('saveButtonClicked', useragent_generic, useragent_special, this.state.input, DNT_status, GPC_status, breadth_status, singlepage_status);
+        this.clearInput();
     }
+
+    toggleInput() {
+        if (document.getElementById('user_generic').checked) {
+            document.getElementById('custom_ua').readOnly = true;
+            console.log("Input should be readonly");
+        } else {
+            document.getElementById('custom_ua').readOnly = false;
+            console.log("Input should not be readonly");
+        }
+    }
+
+    onInput(event) {
+        this.setState({
+          input: event.target.value
+        });
+        console.log('Input changed: ', event.target.value);
+      }
+
+    clearInput(){
+        this.setState({
+          input: ''
+        });
+      }
 
     /** render the html elements*/
     render() {
@@ -61,7 +89,7 @@ class SettingsPage extends Component {
                             Standard
                         </div>
                         <div class="col-auto">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="user_generic"/>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="user_generic" onClick=${this.toggleInput}/>
                         </div>
                     </div>
                 </div>
@@ -69,10 +97,10 @@ class SettingsPage extends Component {
                     <div class="row align-items-center">
                         <div class="col">
                             <p class="mb-1">Custom</p>
-                            <input type="text"  class="form-control" id="inlineFormInputGroup" placeholder="Custom User Agent"/>
+                            <input type="text"  class="form-control" id="inlineFormInputGroup" onInput=${this.onInput} value=${this.state.input} readonly id="custom_ua" placeholder="Custom User Agent"/>
                         </div>
                         <div class="col-auto">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="user_special"/>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="user_special" onClick=${this.toggleInput}/>
                         </div>
                     </div>
                 </div>

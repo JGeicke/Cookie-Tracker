@@ -1,6 +1,7 @@
 const https = require('https');
 const cookieParser = require('set-cookie-parser');
 const { DomainResult } = require("./domainResult");
+const Requests = require('./requests.js');
 
 /** Class used to implement the crawlers functionality.*/
 class SmartCrawlerClass {
@@ -16,17 +17,19 @@ class SmartCrawlerClass {
   /** Domain of the site currently analyzed by the crawler */
   currentDomain = null;
   /** Generic user agent is used */
-  isUaGeneric;
+  isUaGeneric = true;
   /** Special user agent is used */
-  isUaSpecial;
+  isUaSpecial = false;
+
+  custom_ua;
   /** Check if DNT Header should be used */
-  isDNT;
+  isDNT = true;
   /** Check if GPC Header should be used */
-  isGPC;
+  isGPC = false;
   /** Breadth search */
-  isBreadth;
+  isBreadth = true;
   /** Single page search */
-  isSingle;
+  isSingle = false;
 
   /**
    * Create a crawler.
@@ -42,6 +45,18 @@ class SmartCrawlerClass {
     if (this.isRunning) {
       this.abort = true;
     }
+  }
+
+  createSettings() {
+    var settings = {
+      Generic: this.isUaGeneric,
+      Special: this.isUaSpecial,
+      DNT: this.isDNT,
+      GPC: this.isGPC,
+      Breadth: this.isBreadth,
+      Single: this.isSingle
+    }
+    return settings;
   }
 
   /**
@@ -156,7 +171,11 @@ class SmartCrawlerClass {
         // Fetch url with DNT Header
         let DNT_obj = await this.fetchDNT(url, maxRedirects);
 
-        parsedResult.trackingCookies = this.compareCookies(DNT_obj, parsedResult);
+        if (DNT_obj !== undefined) {
+          parsedResult.trackingCookies = this.compareCookies(DNT_obj, parsedResult);
+        } else {
+          parsedResult.trackingCookies = {};
+        }
 
         DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies,
           parsedResult.sessionCookies, parsedResult.trackingCookies);
@@ -186,6 +205,9 @@ class SmartCrawlerClass {
       }
       //set end date
       input.end = new Date();
+      if (this.isSingle) {
+        break;
+      }
     }
     console.log('.finishing');
     // reset running state
@@ -217,6 +239,9 @@ class SmartCrawlerClass {
     }
     let cookies = this.checkCookies(download.headers);
     //console.log("DNT cookies: " + JSON.stringify(cookies));
+    if (cookies == undefined) {
+      return;
+    }
     return {
       persistentCookies: cookies.persistentCookies,
       sessionCookies: cookies.sessionCookies,
@@ -232,6 +257,10 @@ class SmartCrawlerClass {
    * @returns tracking cookies
    */
   compareCookies(DNT_obj, parsedResult) {
+    if (DNT_obj == undefined) {
+      console.log("DNT object is undefined");
+      return;
+    }
     let tracking = {};
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
@@ -241,8 +270,8 @@ class SmartCrawlerClass {
 
       let dntPersistentCookieNames = Object.keys(DNT_obj.persistentCookies);
 
-      dntPersistentCookieNames.forEach((name)=>{
-        if(parsedResult.persistentCookies[name] === undefined){
+      dntPersistentCookieNames.forEach((name) => {
+        if (parsedResult.persistentCookies[name] === undefined) {
           console.log("Found something!");
           tracking[name] = DNT_obj.persistentCookies[name];
         }
@@ -250,8 +279,8 @@ class SmartCrawlerClass {
 
       let dntSessionCookieNames = Object.keys(DNT_obj.sessionCookies);
 
-      dntSessionCookieNames.forEach((name)=>{
-        if(parsedResult.sessionCookies[name] === undefined){
+      dntSessionCookieNames.forEach((name) => {
+        if (parsedResult.sessionCookies[name] === undefined) {
           console.log("Found something!");
           tracking[name] = DNT_obj.sessionCookies[name];
         }
@@ -266,6 +295,10 @@ class SmartCrawlerClass {
    * @returns Array of with initial Cookies set by the website
    */
   checkCookies(headers) {
+    if (headers == undefined) {
+      return;
+    }
+
     // init result object
     const result = {
       persistentCookies: {},
@@ -275,7 +308,7 @@ class SmartCrawlerClass {
 
     // return if no set-cookie header present
     let cookies = [];
-    if (headers['set-cookie'] === undefined) {
+    if (!'set-cookie' in headers && headers['set-cookie'] === undefined) {
       return result;
     }
     let cookieHeader = String(headers['set-cookie']);
@@ -292,7 +325,7 @@ class SmartCrawlerClass {
       // check "expires" of cookie & categorize them
       if (cookie.maxAge !== undefined || cookie.expires !== undefined) {
         // calculate expires if not set
-        if(cookie.expires === undefined){
+        if (cookie.expires === undefined) {
           let date = new Date();
           let currSecs = date.getSeconds();
           date.setSeconds(currSecs + cookie.maxAge);
@@ -403,31 +436,30 @@ class SmartCrawlerClass {
       console.log('...getting');
       var hostname = new URL(url).hostname;
 
-      //DNT Header options
-      const DNT_options = {
-        hostname: hostname,
-        method: 'GET',
-        headers: {
-          'DNT': 1
-        }
-      };
-
-      // GPC Header options
-      const GPC_options = {
-        hostname: hostname,
-        method: 'GET',
-        headers: {
-          'GPC': 1
-        }
-      };
+      var DNT_options = Requests.DNT_options;
+      DNT_options.hostname = hostname;
+      var GPC_options = Requests.GPC_options;
+      GPC_options.hostname = hostname;
+      var DNT_ua_options = Requests.DNT_ua_options;
+      DNT_ua_options.hostname = hostname;
+      DNT_ua_options.headers['User-Agent'] = this.custom_ua;
+      var GPC_ua_options = Requests.GPC_ua_options;
+      GPC_ua_options.hostname = hostname;
+      GPC_ua_options.headers['User-Agent'] = this.custom_ua;
 
       var value;
       if (status) {
         if (this.isDNT) {
           console.log('Executing fetch with DNT');
+          if (this.isUaSpecial) {
+            value = DNT_ua_options;
+          }
           value = DNT_options;
-        } else {
+        } else if (this.isGPC) {
           console.log('Executing fetch with GPC');
+          if (this.isUaSpecial) {
+            value = GPC_ua_options;
+          }
           value = GPC_options;
         }
       } else {
