@@ -3,6 +3,13 @@
 Beim Cookie Tracker handelt es sich um eine Software zur Analyse von Webseiten bezüglich Cookies sowie dem Umgang der Website mit DNT-Header bzw. GPC-Header. Auch bietet die Software die Möglichkeit an zu prüfen, ob Websiten sich je nach User-Agent unterschiedlich verhalten.
 
 ## Installation
+### Windows
+Der Cookie Tracker kann über die entsprechende Cookie Tracker Executable (Cookie Tracker.exe) gestartet werden. Eine Installation ist nicht notwendig.
+
+### MacOS
+TODO
+
+### Linux
 TODO
 
 ## Bedienung
