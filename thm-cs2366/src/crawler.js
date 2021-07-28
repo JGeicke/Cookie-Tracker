@@ -1,6 +1,7 @@
 const https = require('https');
 const cookieParser = require('set-cookie-parser');
 const { DomainResult } = require("./domainResult");
+const Requests = require('./requests.js');
 
 /** Class used to implement the crawlers functionality.*/
 class SmartCrawlerClass {
@@ -16,17 +17,19 @@ class SmartCrawlerClass {
   /** Domain of the site currently analyzed by the crawler */
   currentDomain = null;
   /** Generic user agent is used */
-  isUaGeneric;
+  isUaGeneric = true;
   /** Special user agent is used */
-  isUaSpecial;
+  isUaSpecial = false;
+  /** Custom user agen string */
+  custom_ua;
   /** Check if DNT Header should be used */
-  isDNT;
+  isDNT = true;
   /** Check if GPC Header should be used */
-  isGPC;
+  isGPC = false;
   /** Breadth search */
-  isBreadth;
+  isBreadth = true;
   /** Single page search */
-  isSingle;
+  isSingle = false;
 
   /**
    * Create a crawler.
@@ -45,8 +48,26 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Checks if the url is a sub site of the domain.
-   * @param {*} url - url to check
+   * Helper function to create a settings object
+   * 
+   * @returns the settings
+   */
+  createSettings() {
+    var settings = {
+      Generic: this.isUaGeneric,
+      Special: this.isUaSpecial,
+      DNT: this.isDNT,
+      GPC: this.isGPC,
+      Breadth: this.isBreadth,
+      Single: this.isSingle
+    }
+    return settings;
+  }
+
+  /**
+   * Checks if the url is a sub site of the domain
+   * 
+   * @param {*} url url to check
    * @returns if the url is a sub site of the domain
    */
   isSubSite(url) {
@@ -60,9 +81,10 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Start the crawler.
-   * @param {*} e - event
-   * @param {*} input - input session
+   * Start the crawler
+   * 
+   * @param {*} e event
+   * @param {*} input input session
    * @returns result of the crawling in current session
    */
   async crawl(e, input) {
@@ -146,17 +168,14 @@ class SmartCrawlerClass {
           });
         }
 
-        /* add parsed cookies to result
-        if(parsedResult.cookies !== null){
-          parsedResult.cookies.forEach(cookie => {
-            input.results.initialCookies[cookie.name] = cookie.value;
-          });
-        } */
-
-        // Fetch url with DNT Header
+        // Fetch url with DNT/GPC Header
         let DNT_obj = await this.fetchDNT(url, maxRedirects);
 
-        parsedResult.trackingCookies = this.compareCookies(DNT_obj, parsedResult);
+        if (DNT_obj !== undefined) {
+          parsedResult.trackingCookies = this.compareCookies(DNT_obj, parsedResult);
+        } else {
+          parsedResult.trackingCookies = {};
+        }
 
         DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies,
           parsedResult.sessionCookies, parsedResult.trackingCookies);
@@ -186,6 +205,9 @@ class SmartCrawlerClass {
       }
       //set end date
       input.end = new Date();
+      if (this.isSingle) {
+        break;
+      }
     }
     console.log('.finishing');
     // reset running state
@@ -215,8 +237,13 @@ class SmartCrawlerClass {
       console.log('..fetching redirect ' + url);
       download = await this.fetch(url, true);
     }
-    let cookies = this.checkCookies(download.headers);
-    //console.log("DNT cookies: " + JSON.stringify(cookies));
+
+    let cookies;
+    if (download.headers == undefined) {
+      return;
+    } else {
+      cookies = this.checkCookies(download.headers);
+    }
     return {
       persistentCookies: cookies.persistentCookies,
       sessionCookies: cookies.sessionCookies,
@@ -241,8 +268,8 @@ class SmartCrawlerClass {
 
       let dntPersistentCookieNames = Object.keys(DNT_obj.persistentCookies);
 
-      dntPersistentCookieNames.forEach((name)=>{
-        if(parsedResult.persistentCookies[name] === undefined){
+      dntPersistentCookieNames.forEach((name) => {
+        if (parsedResult.persistentCookies[name] === undefined) {
           console.log("Found something!");
           tracking[name] = DNT_obj.persistentCookies[name];
         }
@@ -250,8 +277,8 @@ class SmartCrawlerClass {
 
       let dntSessionCookieNames = Object.keys(DNT_obj.sessionCookies);
 
-      dntSessionCookieNames.forEach((name)=>{
-        if(parsedResult.sessionCookies[name] === undefined){
+      dntSessionCookieNames.forEach((name) => {
+        if (parsedResult.sessionCookies[name] === undefined) {
           console.log("Found something!");
           tracking[name] = DNT_obj.sessionCookies[name];
         }
@@ -262,7 +289,8 @@ class SmartCrawlerClass {
 
   /**
    * Check if website sets cookies
-   * @param {*} headers - headers of downloaded website
+   * 
+   * @param {*} headers headers of downloaded website
    * @returns Array of with initial Cookies set by the website
    */
   checkCookies(headers) {
@@ -292,7 +320,7 @@ class SmartCrawlerClass {
       // check "expires" of cookie & categorize them
       if (cookie.maxAge !== undefined || cookie.expires !== undefined) {
         // calculate expires if not set
-        if(cookie.expires === undefined){
+        if (cookie.expires === undefined) {
           let date = new Date();
           let currSecs = date.getSeconds();
           date.setSeconds(currSecs + cookie.maxAge);
@@ -309,9 +337,10 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Extract urls from the tags & sort them.
-   * @param {*} urls - tags & attributes with urls to be extracted
-   * @param {*} attribute - base attribute used for slicing e.g. script src=
+   * Extract urls from the tags and sorts them
+   * 
+   * @param {*} urls  tags & attributes with urls to be extracted
+   * @param {*} attribute  base attribute used for slicing e.g. script src=
    * @returns object with extracted internal & external urls.
    */
   extractUrls(urls, attribute) {
@@ -334,7 +363,8 @@ class SmartCrawlerClass {
 
   /**
    * Parse links to external sites from body of website
-   * @param {*} body - body of website
+   * 
+   * @param {*} body body of website
    * @returns array of links to external sites
    */
   parseLinks(body) {
@@ -371,8 +401,9 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Parse the downloaded website for privacy relevant data.
-   * @param {*} result - downloaded website
+   * Parse the downloaded website for privacy relevant data
+   * 
+   * @param {*} result downloaded website
    * @returns downloaded website and extracted privacy data of the website
    */
   async parse(result) {
@@ -394,8 +425,9 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Download a webpage.
-   * @param {string} url - The URL to download.
+   * Download a webpage
+   * 
+   * @param {string} url The URL to download.
    * @returns {Promise} A promise object with status, headers and content.
    */
   fetch(url, status) {
@@ -403,31 +435,31 @@ class SmartCrawlerClass {
       console.log('...getting');
       var hostname = new URL(url).hostname;
 
-      //DNT Header options
-      const DNT_options = {
-        hostname: hostname,
-        method: 'GET',
-        headers: {
-          'DNT': 1
-        }
-      };
-
-      // GPC Header options
-      const GPC_options = {
-        hostname: hostname,
-        method: 'GET',
-        headers: {
-          'GPC': 1
-        }
-      };
+      // Get requests from Requests class
+      var DNT_options = Requests.DNT_options;
+      DNT_options.hostname = hostname;
+      var GPC_options = Requests.GPC_options;
+      GPC_options.hostname = hostname;
+      var DNT_ua_options = Requests.DNT_ua_options;
+      DNT_ua_options.hostname = hostname;
+      DNT_ua_options.headers['User-Agent'] = this.custom_ua;
+      var GPC_ua_options = Requests.GPC_ua_options;
+      GPC_ua_options.hostname = hostname;
+      GPC_ua_options.headers['User-Agent'] = this.custom_ua;
 
       var value;
       if (status) {
         if (this.isDNT) {
           console.log('Executing fetch with DNT');
+          if (this.isUaSpecial) {
+            value = DNT_ua_options;
+          }
           value = DNT_options;
-        } else {
+        } else if (this.isGPC) {
           console.log('Executing fetch with GPC');
+          if (this.isUaSpecial) {
+            value = GPC_ua_options;
+          }
           value = GPC_options;
         }
       } else {

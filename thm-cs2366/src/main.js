@@ -4,7 +4,9 @@ const { SmartCrawlerMenu } = require('./menu.js');
 const { SmartCrawler } = require('./crawler.js');
 const Session = require('./session.js');
 
-/** Main class to initialize the window & control the flow of the application */
+/** 
+ * Main class to initialize the window & control the flow of the application 
+ */
 class Main {
   constructor() {
     app.on('activate', this.onActivate.bind(this));
@@ -20,7 +22,7 @@ class Main {
   }
 
   /**
-   * Creates a new application window.
+   * Creates a new application window
    */
   createWindow() {
     this.win = new BrowserWindow({
@@ -47,8 +49,8 @@ class Main {
   }
 
   /**
-   * Event handler to handle the "ready" event when the DOM is ready.
-   * Creates a new application window & set the application menu.
+   * Event handler to handle the "ready" event when the DOM is ready
+   * Creates a new application window & set the application menu
    */
   onReady() {
     SmartCrawlerMenu.set();
@@ -56,8 +58,8 @@ class Main {
   }
 
   /**
-   * Event handler to handle the "activate" event when app was activated.
-   * The app is being activate on start-up and when the taskbar icon is pressed.
+   * Event handler to handle the "activate" event when app was activated
+   * The app is being activate on start-up and when the taskbar icon is pressed
    */
   onActivate() {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -66,7 +68,7 @@ class Main {
   }
 
   /**
-   * Event handler to quit the application when all windows are closed if the application is not run on macOS.
+   * Event handler to quit the application when all windows are closed if the application is not run on macOS
    */
   onAllWindowsClosed() {
     if (process.platform !== 'darwin') {
@@ -74,37 +76,38 @@ class Main {
     }
   }
 
-    /**
-     * Event handler to handle the "click" event when the button was clicked.
-     * @param {any} e - reference to the event
-     * @param {string} input - input of input field
-     * @param {any} result - input of textarea
-     */
-     async onButtonClicked(e, input, result) {
-      try{
-        let session;
-        if(result){
-          console.log('Continue session...');
-          session = Session.continueSession(input, result);
-          if(session === undefined){
-            e.sender.send('onAlert', 'Loaded session is not valid!');
-            console.error('Session is undefined\nAborting...!');
-            return;
-          }
-        } else if(input !== undefined){
-          session = Session.createSession(input);
-          if(session === undefined){
-            e.sender.send('onAlert', 'Invalid URL!');
-            return;
-          }
-        }else {
-          console.error('Input & Result were undefined');
-          // display error
-          e.sender.send('onAlert', 'Please supply input or load exisiting session!');
+  /**
+   * Event handler to handle the "click" event when the button was clicked
+   * 
+   * @param {any} e reference to the event
+   * @param {string} input input of input field
+   * @param {any} result input of textarea
+   */
+  async onButtonClicked(e, input, result) {
+    try {
+      let session;
+      if (result) {
+        console.log('Continue session...');
+        session = Session.continueSession(input, result);
+        if (session === undefined) {
+          e.sender.send('onAlert', 'Loaded session is not valid!');
+          console.error('Session is undefined\nAborting...!');
           return;
         }
-        console.log(`start crawling`);
-        session = await SmartCrawler.crawl(e, session);
+      } else if (input !== undefined) {
+        session = Session.createSession(input);
+        if (session === undefined) {
+          e.sender.send('onAlert', 'Invalid URL!');
+          return;
+        }
+      } else {
+        console.error('Input & Result were undefined');
+        // display error
+        e.sender.send('onAlert', 'Please supply input or load exisiting session!');
+        return;
+      }
+      console.log(`start crawling`);
+      session = await SmartCrawler.crawl(e, session);
 
       // display result in frontend
       e.sender.send('resultReceived', session);
@@ -114,8 +117,9 @@ class Main {
   }
 
   /**
-   * Abort the crawling session.
-   * @param {*} e - reference to event
+   * Abort the crawling session
+   * 
+   * @param {*} e reference to event
    */
   onAbortButtonClicked(e) {
     SmartCrawler.abortSession();
@@ -123,7 +127,8 @@ class Main {
 
   /**
    * Open new settings modal window
-   * @param {*} e - reference to event
+   * 
+   * @param {*} e reference to event
    */
   onSettingsButtonClicked(e) {
     console.log('settings clicked');
@@ -154,12 +159,7 @@ class Main {
     // show if ready
     child.once('ready-to-show', () => {
       child.show();
-      if (SmartCrawler.isDNT == undefined || SmartCrawler.isGPC == undefined) {
-        console.log("No presets yet");
-      } else {
-        console.log("Loading presets");
-        child.webContents.send('settings', SmartCrawler.createSettings());
-      }
+      child.webContents.send('settings', SmartCrawler.createSettings());
     });
   }
 
@@ -169,14 +169,16 @@ class Main {
    * @param {*} e Reference to the event
    * @param {*} ua_generic Generic user agent
    * @param {*} ua_special Special user agent
+   * @param {*} custom_ua The custom user agent string
    * @param {*} isDNT Do Not Track Header
    * @param {*} isGPC GPC Header
    * @param {*} isBreadth Breadth search
    * @param {*} isSingle Single page search
    */
-  onSaveButtonClicked(e, ua_generic, ua_special, isDNT, isGPC, isBreadth, isSingle) {
+  onSaveButtonClicked(e, ua_generic, ua_special, custom_ua, isDNT, isGPC, isBreadth, isSingle) {
     SmartCrawler.isUaGeneric = ua_generic;
     SmartCrawler.isUaSpecial = ua_special;
+    SmartCrawler.custom_ua = custom_ua;
     SmartCrawler.isDNT = isDNT;
     SmartCrawler.isGPC = isGPC;
     SmartCrawler.isBreadth = isBreadth;
@@ -187,7 +189,8 @@ class Main {
 
   /**
    * Open new details modal window
-   * @param {*} e - reference to event
+   * 
+   * @param {*} e reference to event
    */
   onDetailsButtonClicked(e, title, cookies) {
     console.log('details clicked');

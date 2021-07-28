@@ -3,28 +3,27 @@ const session = require('../src/session.js');
 const { ipcRenderer } = require('electron');
 import { h, Component, html, render } from '../assets/preact.js';
 
-/**Welcome page when the app is started */
+/**
+ * Welcome page when the app is started 
+ */
 class WelcomePage extends Component {
   /**
-   * whether the load/save dialogue is currently opened.
+   * Whether the load/save dialogue is currently opened
+   * 
    * @type {boolean}
    */
   dialogOpened = false;
 
-  /**
-   * session results.
-   */
+  /** Session results */
   result;
 
-  /**
-   * reference to the chart element.
-   */
+  /** Reference to the chart element */
   chart;
 
-  /** path to opened session file*/
+  /** Path to opened session file */
   path;
 
-  /**Create new welcome page component */
+  /** Create new welcome page component */
   constructor(props) {
     super(props);
 
@@ -55,11 +54,12 @@ class WelcomePage extends Component {
   }
 
   /**
-   * Render the chart view when the session is done or was canceled.
-   * @param event - reference to the event
-   * @param data - session result data
+   * Render the chart view when the session is done or was canceled
+   * 
+   * @param event reference to the event
+   * @param data session result data
    */
-  resultReceived(event, data){
+  resultReceived(event, data) {
     //store result
     this.result = data;
 
@@ -130,7 +130,7 @@ class WelcomePage extends Component {
   /**
    * Change view to the standard crawler view.
    */
-  showCrawlView(){
+  showCrawlView() {
     console.log('return');
     // reset content
     document.body.innerHTML = '';
@@ -140,11 +140,12 @@ class WelcomePage extends Component {
   }
 
   /**
-   * Create and display the chart element.
-   * @param data - data to create the chart off
-   * @param scope - scope (all/domain) to evaluate the data with
+   * Create and display the chart element
+   * 
+   * @param data data to create the chart off
+   * @param scope scope (all/domain) to evaluate the data with
    */
-  generateChart(data, scope){
+  generateChart(data, scope) {
     // evaluate session
     let evaluation = session.evaluateSession(data, scope);
 
@@ -187,17 +188,18 @@ class WelcomePage extends Component {
     };
 
     this.chart = new Chart(
-        document.getElementById('chart'),
-        config
+      document.getElementById('chart'),
+      config
     );
   }
 
   /**
-   * Update the exisiting chart element.
-   * @param data - data to update the chart with
-   * @param scope - scope (all/domain) to evaluate the data with
+   * Update the exisiting chart element
+   * 
+   * @param data data to update the chart with
+   * @param scope scope (all/domain) to evaluate the data with
    */
-  updateChart(data, scope){
+  updateChart(data, scope) {
     // evaluate session
     let evaluation = session.evaluateSession(data, scope);
 
@@ -219,7 +221,7 @@ class WelcomePage extends Component {
   /**
    * Change and update the chart to display the results of the selected domain.
    */
-  changeChart(){
+  changeChart() {
     console.log('change chart');
     let key = document.getElementById('domainSelection').value;
     this.updateChart(this.result, key);
@@ -228,10 +230,10 @@ class WelcomePage extends Component {
   /**
    * Workaround to toggle the url log.
    */
-  toggleLog(){
+  toggleLog() {
     console.log('click');
     this.test = !this.test;
-    if(this.test){
+    if (this.test) {
       console.log('active');
     }
   }
@@ -244,16 +246,16 @@ class WelcomePage extends Component {
     output = data + '\n' + output;
 
     this.setState({
-        html: output
+      html: output
     });
   }
 
   /**Event handler to handle the "onkeyup" event.*/
-  onKeyUp(event){
+  onKeyUp(event) {
     // keycode: 13='Enter' 
-    if(event.keyCode === 13){
+    if (event.keyCode === 13) {
       this.clickButton();
-    } else if(event.keyCode === 27){
+    } else if (event.keyCode === 27) {
       //keycode: 27='ESC'
       this.clearInput();
     }
@@ -268,7 +270,7 @@ class WelcomePage extends Component {
   }
 
   /**Event handler to handle the "onStarted" event when the crawler was started. */
-  onStarted(event){
+  onStarted(event) {
 
     // render spinner
     render(html`
@@ -282,21 +284,22 @@ class WelcomePage extends Component {
   }
 
   /**
-   * Create new alert and clear it after timer expires.
-   * @param event - event reference
-   * @param text - text displayed in the alert
-   * @param category - category of the alert
+   * Create new alert and clear it after timer expires
+   * 
+   * @param event event reference
+   * @param text text displayed in the alert
+   * @param category category of the alert
    */
-  onAlert(event, text, category='error'){
+  onAlert(event, text, category = 'error') {
     let element = document.getElementById('alert-area');
 
-    if(category === 'success'){
+    if (category === 'success') {
       render(html`
       <div class="alert alert-success fade show" role="alert">
         ${text}
       </div>
     `, element);
-    } else{
+    } else {
       render(html`
       <div class="alert alert-danger fade show" role="alert">
         ${text}
@@ -307,8 +310,8 @@ class WelcomePage extends Component {
   }
 
   /** Clear alert area*/
-  clearAlert(){
-    document.getElementById('alert-area').innerHTML='';
+  clearAlert() {
+    document.getElementById('alert-area').innerHTML = '';
   }
 
   /**Event handler to handle the "onClick" event.*/
@@ -319,9 +322,9 @@ class WelcomePage extends Component {
   }
 
   /** Load json file containing a session result */
-  async loadJsonResult(){
+  async loadJsonResult() {
     // check if another dialog is opened
-    if(this.dialogOpened){
+    if (this.dialogOpened) {
       return;
     }
     // set dialog
@@ -329,68 +332,27 @@ class WelcomePage extends Component {
     let options = {
       filters: [
         { name: 'All Files', extensions: ['*'] },
-        {name: 'JSON', extensions: ['json']}
+        { name: 'JSON', extensions: ['json'] }
       ],
       properties: ['openFile']
     };
     // show load dialog
     let result = await dialog.showOpenDialog(options);
 
-     // check if dialog was canceled
-     if(!result.canceled){
+    // check if dialog was canceled
+    if (!result.canceled) {
       let path = result.filePaths[0];
       // set path of current session;
       this.path = path;
-      try{
+      try {
         let input = jetpack.read(path, 'jsonWithDates');
         console.log(input);
         this.result = input;
 
         // successfully loaded session
         this.onAlert(null, 'Successfully loaded session!', 'success');
-      } catch(err){
+      } catch (err) {
         this.onAlert(null, 'Invalid JSON file!');
-        console.error(err);
-      }
-    }
-     // reset dialog
-     this.dialogOpened = false;
-  }
-
-  /** Save json file containing with session result */
-  async saveJsonResult(){
-    // check if another dialog is opened
-    if(this.dialogOpened){
-      return;
-    }
-    // set dialog
-    this.dialogOpened = true;
-
-    let options = {
-      filters: [
-        { name: 'All Files', extensions: ['*'] },
-        {name: 'JSON', extensions: ['json']}
-      ]
-    };
-
-    // add path to options if present
-    if(this.path !== null){
-      options.defaultPath = this.path;
-    }
-    // show save dialog
-    let result = await dialog.showSaveDialog(options);
-
-    // check if dialog was canceled
-    if(!result.canceled){
-      let path = result.filePath;
-      // check if result
-      if(this.result === null){
-        console.log('no result to save');
-        return;
-      }
-      try{
-        jetpack.writeAsync(path, this.result);
-      } catch(err){
         console.error(err);
       }
     }
@@ -398,33 +360,82 @@ class WelcomePage extends Component {
     this.dialogOpened = false;
   }
 
-  /**Clears the input state */
-  clearInput(){
+  /** Save json file containing with session result */
+  async saveJsonResult() {
+    // check if another dialog is opened
+    if (this.dialogOpened) {
+      return;
+    }
+    // set dialog
+    this.dialogOpened = true;
+
+    let options = {
+      filters: [
+        { name: 'All Files', extensions: ['*'] },
+        { name: 'JSON', extensions: ['json'] }
+      ]
+    };
+
+    // add path to options if present
+    if (this.path !== null) {
+      options.defaultPath = this.path;
+    }
+    // show save dialog
+    let result = await dialog.showSaveDialog(options);
+
+    // check if dialog was canceled
+    if (!result.canceled) {
+      let path = result.filePath;
+      // check if result
+      if (this.result === null) {
+        console.log('no result to save');
+        return;
+      }
+      try {
+        jetpack.writeAsync(path, this.result);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    // reset dialog
+    this.dialogOpened = false;
+  }
+
+  /**
+   * Clears the input state 
+   */
+  clearInput() {
     this.setState({
       input: '',
       html: ''
     });
   }
 
-  /** Aborts running session */
-  abortSession(){
+  /** 
+   * Aborts running session 
+   */
+  abortSession() {
     console.log('Abort-Button clicked in UI!', this.state.input);
     ipcRenderer.invoke('abortButtonClicked', this.state.input);
   }
 
-  /** Settings button handler*/
-  settingsClicked(){
+  /** 
+   * Settings button handler
+   */
+  settingsClicked() {
     ipcRenderer.invoke('settingsButtonClicked');
   }
 
-  /** Settings button handler*/
-  detailsClicked(){
+  /** 
+   * Settings button handler
+   */
+  detailsClicked() {
     // domain key to display the details for
     let key = document.getElementById('domainSelection').value;
     let cookies;
-    if(key === 'all'){
+    if (key === 'all') {
       cookies = this.result.results;
-    } else{
+    } else {
       // get cookies of domain
       cookies = this.result.results[key];
     }
@@ -433,7 +444,7 @@ class WelcomePage extends Component {
     ipcRenderer.invoke('detailsButtonClicked', key, cookies);
   }
 
-  /** render the html elements*/
+  /** Render the html elements*/
   render() {
     return html`
       <div class="container-fluid" id="root">
@@ -483,7 +494,7 @@ class WelcomePage extends Component {
               <div class="input-group-prepend text-center">
                 <div class="input-group-text">URL</div>
               </div>
-              <input type="text"  class="form-control" id="inlineFormInputGroup" placeholder="URL" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>
+              <input type="text"  class="form-control" id="inlineFormInputGroup" placeholder="e.g. https://www.example.com" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>
             </div>
           </div>
           <div class="col-sm-2 text-center"></div>
