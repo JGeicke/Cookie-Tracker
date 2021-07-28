@@ -36,10 +36,6 @@ class Session {
       persistentCookies += persistentCookiesCount;
       trackingCookies += trackingCookiesCount;
       sessionCookies += sessionCookiesCount;
-
-      console.log('session ' + sessionCookiesCount);
-      console.log('persistent ' + persistentCookiesCount);
-      console.log('tracking ' + trackingCookiesCount);
     });
 
     // check if no cookies in session found
@@ -68,7 +64,6 @@ class Session {
         results: {}
       };
     } catch (err) {
-      console.log('Not a url. Aborting...!');
       return undefined;
     }
   }
@@ -86,8 +81,6 @@ class Session {
     try {
       if (url && !session.urls_done.includes(url) && !session.urls.includes(url)) {
         session.urls.push(url);
-      } else {
-        console.log('no url defined or already visited.');
       }
 
       // check parsed session
@@ -98,7 +91,6 @@ class Session {
       return undefined;
     } catch (err) {
       console.error(err);
-      console.log('Illegal session\nStarting new session...');
       if (url) {
         session = this.createSession(url);
         return session;
@@ -126,7 +118,6 @@ class Session {
     }
     // check results
     let res = session['results'];
-    console.log(res);
     if (res === undefined) {
       return false;
     }

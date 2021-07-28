@@ -101,11 +101,9 @@ class SmartCrawlerClass {
     // start spinner
     e.sender.send('onStarted');
 
-    console.log('.crawling');
     while (input.urls.length > 0 || internalURLs.length > 0) {
       // check for abort
       if (this.abort) {
-        console.log('.abort');
         break;
       }
       // get next url
@@ -117,14 +115,12 @@ class SmartCrawlerClass {
         // no internal urls, but at least 1 external -> continue
         url = input.urls.pop();
         if (url === undefined) {
-          console.log('.abort');
           break;
         }
       }
 
       //download
       try {
-        console.log('..fetching ' + url)
         let download = await this.fetch(url, false);
 
         //add url to visited
@@ -141,7 +137,6 @@ class SmartCrawlerClass {
         while (download.status !== 200 && redirectCount < maxRedirects) {
           redirectCount++;
           url = download.redirectURL;
-          console.log('..fetching redirect ' + url);
           download = await this.fetch(url, false);
 
           //add redirect url to visited
@@ -155,7 +150,6 @@ class SmartCrawlerClass {
         }
 
         //parse
-        console.log('..parsing');
         let parsedResult = await this.parse(download);
 
         // add external links to result
@@ -180,14 +174,11 @@ class SmartCrawlerClass {
         DomainResult.fillDomainResultObject(this.currentDomain, this.currentSession, parsedResult.persistentCookies,
           parsedResult.sessionCookies, parsedResult.trackingCookies);
 
-        console.log("external: " + input.urls.length);
-        console.log("internal: " + internalURLs.length);
         // check if there are external links to follow
         if (input.urls.length < this.MIN_EXTERNALS) {
           // add internal urls to analyze because no external urls were found
           if (parsedResult.urls !== null) {
             parsedResult.urls.forEach((link) => {
-              console.log("adding internal:" + link);
               // check if url is already contained
               if (!internalURLs.includes(link) && !input.urls_done.includes(link)) {
                 internalURLs.push(link);
@@ -198,10 +189,8 @@ class SmartCrawlerClass {
           // clear internal urls and continue crawling to next domain
           internalURLs.length = 0;
         }
-        console.log("external: " + input.urls.length);
-        console.log("internal: " + internalURLs.length);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
       //set end date
       input.end = new Date();
@@ -209,7 +198,6 @@ class SmartCrawlerClass {
         break;
       }
     }
-    console.log('.finishing');
     // reset running state
     this.isRunning = false;
     // reset abort if crawler was stopped with button press
@@ -234,7 +222,6 @@ class SmartCrawlerClass {
       } else {
         url = download.redirectURL;
       }
-      console.log('..fetching redirect ' + url);
       download = await this.fetch(url, true);
     }
 
@@ -260,17 +247,14 @@ class SmartCrawlerClass {
    */
   compareCookies(DNT_obj, parsedResult) {
     let tracking = {};
-    console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
       Object.keys(DNT_obj.sessionCookies).length === Object.keys(parsedResult.sessionCookies).length) {
-      console.log("Persistent and session cookies match with and without DNT/GPC");
     } else {
 
       let dntPersistentCookieNames = Object.keys(DNT_obj.persistentCookies);
 
       dntPersistentCookieNames.forEach((name) => {
         if (parsedResult.persistentCookies[name] === undefined) {
-          console.log("Found something!");
           tracking[name] = DNT_obj.persistentCookies[name];
         }
       });
@@ -279,7 +263,6 @@ class SmartCrawlerClass {
 
       dntSessionCookieNames.forEach((name) => {
         if (parsedResult.sessionCookies[name] === undefined) {
-          console.log("Found something!");
           tracking[name] = DNT_obj.sessionCookies[name];
         }
       });
@@ -432,7 +415,6 @@ class SmartCrawlerClass {
    */
   fetch(url, status) {
     return new Promise((resolve, reject) => {
-      console.log('...getting');
       var hostname = new URL(url).hostname;
 
       // Get requests from Requests class
@@ -450,13 +432,11 @@ class SmartCrawlerClass {
       var value;
       if (status) {
         if (this.isDNT) {
-          console.log('Executing fetch with DNT');
           if (this.isUaSpecial) {
             value = DNT_ua_options;
           }
           value = DNT_options;
         } else if (this.isGPC) {
-          console.log('Executing fetch with GPC');
           if (this.isUaSpecial) {
             value = GPC_ua_options;
           }
@@ -472,7 +452,6 @@ class SmartCrawlerClass {
         // Request unsuccessful
         if (res.statusCode !== 200) {
           if (res.statusCode === 301 || res.statusCode === 302) {
-            console.log(`....redirect to ${res.headers.location}`);
             resolve({
               status: res.statusCode,
               redirectURL: res.headers.location

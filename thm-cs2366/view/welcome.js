@@ -131,7 +131,6 @@ class WelcomePage extends Component {
    * Change view to the standard crawler view.
    */
   showCrawlView() {
-    console.log('return');
     // reset content
     document.body.innerHTML = '';
 
@@ -222,7 +221,6 @@ class WelcomePage extends Component {
    * Change and update the chart to display the results of the selected domain.
    */
   changeChart() {
-    console.log('change chart');
     let key = document.getElementById('domainSelection').value;
     this.updateChart(this.result, key);
   }
@@ -231,11 +229,7 @@ class WelcomePage extends Component {
    * Workaround to toggle the url log.
    */
   toggleLog() {
-    console.log('click');
     this.test = !this.test;
-    if (this.test) {
-      console.log('active');
-    }
   }
 
   /**Event handler to handle the "htmlReceived" event.
@@ -266,7 +260,6 @@ class WelcomePage extends Component {
     this.setState({
       input: event.target.value
     });
-    console.log('Input changed: ', event.target.value);
   }
 
   /**Event handler to handle the "onStarted" event when the crawler was started. */
@@ -316,7 +309,6 @@ class WelcomePage extends Component {
 
   /**Event handler to handle the "onClick" event.*/
   clickButton() {
-    console.log('Button clicked in UI!', this.state.input);
     ipcRenderer.invoke('buttonClicked', this.state.input, this.result);
     this.clearInput();
   }
@@ -346,7 +338,6 @@ class WelcomePage extends Component {
       this.path = path;
       try {
         let input = jetpack.read(path, 'jsonWithDates');
-        console.log(input);
         this.result = input;
 
         // successfully loaded session
@@ -388,7 +379,6 @@ class WelcomePage extends Component {
       let path = result.filePath;
       // check if result
       if (this.result === null) {
-        console.log('no result to save');
         return;
       }
       try {
@@ -415,7 +405,6 @@ class WelcomePage extends Component {
    * Aborts running session 
    */
   abortSession() {
-    console.log('Abort-Button clicked in UI!', this.state.input);
     ipcRenderer.invoke('abortButtonClicked', this.state.input);
   }
 
@@ -440,7 +429,6 @@ class WelcomePage extends Component {
       cookies = this.result.results[key];
     }
 
-    console.log(this.result.results);
     ipcRenderer.invoke('detailsButtonClicked', key, cookies);
   }
 

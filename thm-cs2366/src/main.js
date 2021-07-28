@@ -46,6 +46,19 @@ class Main {
     this.win.once('ready-to-show', () => {
       this.win.show();
     });
+
+    this.win.on('close', function(e){
+      const choice = dialog.showMessageBoxSync(this,
+          {
+            type: 'question',
+            buttons: ['Yes', 'No'],
+            title: 'Confirm',
+            message: 'Are you sure you want to quit? All unsaved sessions will be lost!'
+          });
+      if(choice == 1){
+        e.preventDefault();
+      }
+    });
   }
 
   /**
@@ -87,7 +100,6 @@ class Main {
     try {
       let session;
       if (result) {
-        console.log('Continue session...');
         session = Session.continueSession(input, result);
         if (session === undefined) {
           e.sender.send('onAlert', 'Loaded session is not valid!');
@@ -106,7 +118,6 @@ class Main {
         e.sender.send('onAlert', 'Please supply input or load exisiting session!');
         return;
       }
-      console.log(`start crawling`);
       session = await SmartCrawler.crawl(e, session);
 
       // display result in frontend
@@ -131,7 +142,6 @@ class Main {
    * @param {*} e reference to event
    */
   onSettingsButtonClicked(e) {
-    console.log('settings clicked');
     let parent = BrowserWindow.getFocusedWindow();
     // create new child window
     const child = new BrowserWindow({
@@ -193,7 +203,6 @@ class Main {
    * @param {*} e reference to event
    */
   onDetailsButtonClicked(e, title, cookies) {
-    console.log('details clicked');
     let parent = BrowserWindow.getFocusedWindow();
     // create new child window
     const child = new BrowserWindow({
@@ -220,7 +229,6 @@ class Main {
     // show if ready
     child.once('ready-to-show', () => {
       child.show()
-      console.log('main...' + title + ' ' + cookies);
       child.webContents.send('detailsReceived', title, cookies);
     });
   }

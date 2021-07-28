@@ -23,7 +23,6 @@ class SettingsPage extends Component {
    * @param {*} settings The settings object with all settings
    */
   setCheckboxes(e, settings) {
-    console.log("Loading previous settings");
     document.getElementById('user_generic').checked = settings.Generic;
     document.getElementById('user_special').checked = settings.Special;
     document.getElementById('dntHeader').checked = settings.DNT;
@@ -51,10 +50,8 @@ class SettingsPage extends Component {
   toggleInput() {
     if (document.getElementById('user_generic').checked) {
       document.getElementById('custom_ua').readOnly = true;
-      console.log("Input should be readonly");
     } else {
       document.getElementById('custom_ua').readOnly = false;
-      console.log("Input should not be readonly");
     }
   }
 
@@ -67,7 +64,6 @@ class SettingsPage extends Component {
     this.setState({
       input: event.target.value
     });
-    console.log('Input changed: ', event.target.value);
   }
 
   /**

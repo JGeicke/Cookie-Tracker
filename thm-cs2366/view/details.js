@@ -70,8 +70,6 @@ class DetailsPage extends Component {
     keys.forEach((key) => {
       let domain = key;
 
-      console.log(key);
-
       // session cookies
       let sessionCookies = cookies[domain].sessionCookies;
       let cookieNames = Object.keys(sessionCookies);
@@ -234,7 +232,6 @@ class DetailsPage extends Component {
 
   /** render the html elements*/
   render() {
-    console.log('render...' + this.title);
     return html`
         <div class="container-fluid">
             <hr class="my-3" />
