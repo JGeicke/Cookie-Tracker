@@ -1,28 +1,71 @@
 # Cookie Tracker
 ## Allgemein
-Beim Cookie Tracker handelt es sich um eine Software zur Analyse von Webseiten hinsichtlich Cookies. Dabei kann der Benutzer zunächst eine Domain bezüglich __Cookies__ & dem Umgang mit __Do Not Track (DNT)-__ & __Global Privacy Control (GPC)-Header__ untersuchen. Während der Analyse erkennt der Cookie Tracker externe Links & folgt diesen nach Abschluss der Analyse. Dies wird so oft wiederholt, bis keine weiteren externen Links verfügbar sind oder der Nutzer den Vorgang unterbricht. Nach Abschluss oder Abbruch des Vorgangs werden die gesammelten Ergebnisse als Diagramme anschaulich präsentiert. Der Nutzer bekommt einen allgemeinen Überblick über den abgeschlossenen Vorgang, kann aber auch einzelne Domains bei Interesse genauer untersuchen & sich die Ergebnisse präsentieren lassen. Abgeschlossene oder abgebrochene Vorgänge lassen sich dabei ebenfalls zwischenspeichern & laden. Unterbrochene Vorgänge lassen sich somit zu einem späteren Zeitpunkt weiterführen.
+Beim Cookie Tracker handelt es sich um eine Software zur Analyse von Webseiten bezüglich Cookies sowie dem Umgang der Website mit DNT-Header bzw. GPC-Header. Auch bietet die Software die Möglichkeit an zu prüfen, ob Websiten sich je nach User-Agent unterschiedlich verhalten.
+
+## Installation
+### Windows
+Der Cookie Tracker kann über die entsprechende Cookie Tracker Executable (Cookie Tracker.exe) gestartet werden. Eine Installation ist nicht notwendig.
+
+### MacOS
+TODO
+
+### Linux
+TODO
+
 ## Bedienung
-Um den Crawl-Vorgang starten zu können, hat man zunächst zwei Optionen:
-- eine bestehende Session zu laden
-- eine neue URL zum Analysieren in das __URL__ Feld einzutragen
+Nach Starten des Cookie Trackers gelangt man zunächst zur Hauptansicht.
+Der Nutzer hat dabei die Möglichkeit eine bestehende Session zu laden oder eine neue Session mit einer URL zu beginnen.
 
-Beide Optionen lassen sich dabei auch kombinieren (später dazu mehr).
 
-Um eine bestehende Session zu laden, kann durch Klicken auf den __Load__ Button im unteren Bereich des Crawlers eine __JSON__-Datei geladen werden. Beim Laden der Datei wird geprüft, ob es die __JSON__ Datei eine gültige Session beinhaltet oder nicht.
-Alternativ dazu kann in das __URL__ Feld eine URL eingetragen werden. Diese wird bei einer geladenen Session nur berücksichtigt, wenn die __URL__ zur __Domain__ der Session gehört. Wird keine Session geladen, wird eine neue Session mit der __URL__ erzeugt. Falls die __URL__ dabei ungültig ist, wird der Crawl-Vorgang frühzeitig abgebrochen. 
+Im Settings-Fenster kann der Nutzer das Verhalten des Cookie Tracker entsprechend anpassen.
 
-Durch Klicken auf den __Start__ Button im oberen Bereich des Crawlers wird der Crawl-Vorgang gestartet. Während dem Crawl-Vorgang werden bereits untersuchte __URLs__ im mittleren Feld ausgegeben. Der Crawl-Vorgang lässt sich jederzeit mit einem Klick auf den __Stop__ Button unterbrechen, wodurch das Ergebnis im mittleren Feld ausgegeben wird. Der Vorgang kann erneut durch Klicken auf den __Start__ Button weitergeführt werden.
+Beim Starten des Vorgangs untersucht Cookie Tracker die ausstehenden URLs nach Cookies. Bereits untersuchte URLs werden im Log
+für den Nutzer ausgegeben. Sollte der Vorgang unterbrochen werden oder der Cookie Tracker hat keine weiteren URLs, denen er folgen kann,
+gelangt der Nutzer zur Darstellung der Ergebnisse mit Hilfe von Charts.
 
-Falls der Vorgang unterbrochen wird oder alle __URLs__ der Domäne erfolgreich untersucht wurden, wird im mittleren Feld das Ergebnis der Session ausgegeben. Dieses lässt sich durch Klicken auf den __Save__ Button im unteren Bereich des Crawlers in einer JSON-Datei speichern.
+Zunächst werden dem Nutzer die Ergebnisse von allen untersuchten URLs präsentiert. Der Nutzer kann sich die Ergebnisse
+von einzelne URLs darstellen lassen. Mit Hilfe des Dropdown-Menüs kann die Ergebnisse von allen bzw. einzelnen Domains detailliert
+dargestellt bekommen.
 
+Abgeschlossene oder pausierte Sessions lassen sich nach Belieben speichern und zu einem späteren Zeitpunkt fortsetzen. 
+Auch eine pausierte bzw. gestoppte Session kann nach der Darstellung der Zwischenergebnisse weitergeführt werden.
+
+## Einstellungen
+### User Agent
+__Standard__: Der Standard User Agent, welcher von Node.js HTTPS Libary verwendet wird.
+
+__Custom__: Es wird der vom Nutzer eingetragene User Agent verwendet.
+
+    
+### Header
+__DNT Header__: Es wird beim Request der veraltete DNT Header verwendet, um Tracking Cookies zu erlauben und zu ermitteln.
+Der DNT Header wird seit 2019 nicht mehr weiter verfolgt durch fehlende Unterstützung und Adaption der Branche.
+
+__GPC Header__: Es wird beim Request der neuere GPC Header verwendet, um Tracking Cookies zu erlauben und zu ermitteln.
+Der GPC Header ist seit 2020 der geistige Nachfolger des DNT Headers.
+
+### Crawler Behaviour
+__Breadth__: Cookie Tracker untersucht Webseiten nach externen Links und geht zur Analyse der externen Webseiten über,
+nachdem die aktuelle Webseite ausgewertet wurde.
+
+__Single Page__: Cookie Tracker wertet nur die vom Nutzer eingebene Webseite aus und stoppt nach der vollständigen Auswertung.
 ## Entwicklerteam
 Der Cookie Tracker wurde von Leon George & Jan Geicke als Projekt für das Modul "CS2366 Datenschutz und Datensicherheit" von Tobias Reimann an der Technischen Hochschule Mittelhessen im Sommersemester 2021 entwickelt.
+
 ## Bibliotheken
 - Bootstrap
-- Preact
+- Chart.js
+- fs-jetpack
 - JQuery
 - PopperJS
-- Chart.js
+- Preact
+- set-cookie-parser
+
+
+
+## Bekannte Bugs
+- Manchmal kann es beim Wechseln von der Ergebnisdarstellung hin zur Hauptansicht zur einer Vermischung der beiden Ansichten kommen.
+__Temporärer Workaround__: Crawler neustarten. 
 
 ## Icons Attribution
 <div>Cookie Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
