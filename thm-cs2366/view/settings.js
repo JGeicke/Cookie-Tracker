@@ -2,76 +2,86 @@ const { ipcRenderer } = require('electron');
 import { Component, html, render } from '../assets/preact.js';
 
 /**
- *  Component of the crawler settings.
+ *  Component of the crawler settings
  */
 class SettingsPage extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.setCheckboxes = this.setCheckboxes.bind(this);
-        this.saveButtonClicked = this.saveButtonClicked.bind(this);
-        this.onInput = this.onInput.bind(this);
-        this.toggleInput = this.toggleInput.bind(this);
-        this.clearInput = this.clearInput.bind(this);
-        ipcRenderer.on('settings', this.setCheckboxes);
+    this.setCheckboxes = this.setCheckboxes.bind(this);
+    this.saveButtonClicked = this.saveButtonClicked.bind(this);
+    this.onInput = this.onInput.bind(this);
+    this.toggleInput = this.toggleInput.bind(this);
+    this.clearInput = this.clearInput.bind(this);
+    ipcRenderer.on('settings', this.setCheckboxes);
+  }
+
+  /**
+   * Sets the checkboxes according to previous settings
+   * 
+   * @param {*} e Reference to the event
+   * @param {*} settings The settings object with all settings
+   */
+  setCheckboxes(e, settings) {
+    console.log("Loading previous settings");
+    document.getElementById('user_generic').checked = settings.Generic;
+    document.getElementById('user_special').checked = settings.Special;
+    document.getElementById('dntHeader').checked = settings.DNT;
+    document.getElementById('gpcHeader').checked = settings.GPC;
+    document.getElementById('breadth').checked = settings.Breadth;
+    document.getElementById('single-page').checked = settings.Single;
+  }
+  /**
+   * Send all settings to backend on save button click
+   */
+  saveButtonClicked() {
+    var useragent_generic = document.getElementById('user_generic').checked ? true : false;
+    var useragent_special = document.getElementById('user_special').checked ? true : false;
+    var DNT_status = document.getElementById('dntHeader').checked ? true : false;
+    var GPC_status = document.getElementById('gpcHeader').checked ? true : false;
+    var breadth_status = document.getElementById('breadth').checked ? true : false;
+    var singlepage_status = document.getElementById('single-page').checked ? true : false;
+    ipcRenderer.invoke('saveButtonClicked', useragent_generic, useragent_special, this.state.input, DNT_status, GPC_status, breadth_status, singlepage_status);
+    this.clearInput();
+  }
+
+  /**
+   * Set state of input box if custom user agent is not used
+   */
+  toggleInput() {
+    if (document.getElementById('user_generic').checked) {
+      document.getElementById('custom_ua').readOnly = true;
+      console.log("Input should be readonly");
+    } else {
+      document.getElementById('custom_ua').readOnly = false;
+      console.log("Input should not be readonly");
     }
+  }
 
-    /**
-     * Sets the checkboxes according to previous settings
-     * 
-     * @param {*} e Reference to the event
-     * @param {*} settings The settings object with all settings
-     */
-    setCheckboxes(e, settings) {
-        console.log("Loading previous settings");
-        document.getElementById('user_generic').checked = settings.Generic;
-        document.getElementById('user_special').checked = settings.Special;
-        document.getElementById('dntHeader').checked = settings.DNT;
-        document.getElementById('gpcHeader').checked = settings.GPC;
-        document.getElementById('breadth').checked = settings.Breadth;
-        document.getElementById('single-page').checked = settings.Single;
-    }
-    /**
-     * Send all settings to backend on save button click
-     */
-    saveButtonClicked() {
-        var useragent_generic = document.getElementById('user_generic').checked ? true : false;
-        var useragent_special = document.getElementById('user_special').checked ? true : false;
-        var DNT_status = document.getElementById('dntHeader').checked ? true : false;
-        var GPC_status = document.getElementById('gpcHeader').checked ? true : false;
-        var breadth_status = document.getElementById('breadth').checked ? true : false;
-        var singlepage_status = document.getElementById('single-page').checked ? true : false;
-        //console.log('UA generic:' + useragent_generic + ' UA special: ' + useragent_special + ' DNT: ' + DNT_status + ' GPC: ' + GPC_status);
-        ipcRenderer.invoke('saveButtonClicked', useragent_generic, useragent_special, this.state.input, DNT_status, GPC_status, breadth_status, singlepage_status);
-        this.clearInput();
-    }
+  /**
+   * Send custom user agent to backend
+   * 
+   * @param {*} event the event
+   */
+  onInput(event) {
+    this.setState({
+      input: event.target.value
+    });
+    console.log('Input changed: ', event.target.value);
+  }
 
-    toggleInput() {
-        if (document.getElementById('user_generic').checked) {
-            document.getElementById('custom_ua').readOnly = true;
-            console.log("Input should be readonly");
-        } else {
-            document.getElementById('custom_ua').readOnly = false;
-            console.log("Input should not be readonly");
-        }
-    }
+  /**
+   * Clears the input
+   */
+  clearInput() {
+    this.setState({
+      input: ''
+    });
+  }
 
-    onInput(event) {
-        this.setState({
-          input: event.target.value
-        });
-        console.log('Input changed: ', event.target.value);
-      }
-
-    clearInput(){
-        this.setState({
-          input: ''
-        });
-      }
-
-    /** render the html elements*/
-    render() {
-        return html`
+  /** render the html elements */
+  render() {
+    return html`
         <div class="container-fluid">
             <hr class="my-3" />
             <div class="row text-center mt-2">
@@ -168,6 +178,6 @@ class SettingsPage extends Component {
             </div>
         </div>
         `;
-    }
+  }
 }
 render(html`<${SettingsPage} />`, document.body);

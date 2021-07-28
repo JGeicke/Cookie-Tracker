@@ -20,7 +20,7 @@ class SmartCrawlerClass {
   isUaGeneric = true;
   /** Special user agent is used */
   isUaSpecial = false;
-
+  /** Custom user agen string */
   custom_ua;
   /** Check if DNT Header should be used */
   isDNT = true;
@@ -47,6 +47,11 @@ class SmartCrawlerClass {
     }
   }
 
+  /**
+   * Helper function to create a settings object
+   * 
+   * @returns the settings
+   */
   createSettings() {
     var settings = {
       Generic: this.isUaGeneric,
@@ -60,8 +65,9 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Checks if the url is a sub site of the domain.
-   * @param {*} url - url to check
+   * Checks if the url is a sub site of the domain
+   * 
+   * @param {*} url url to check
    * @returns if the url is a sub site of the domain
    */
   isSubSite(url) {
@@ -75,9 +81,10 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Start the crawler.
-   * @param {*} e - event
-   * @param {*} input - input session
+   * Start the crawler
+   * 
+   * @param {*} e event
+   * @param {*} input input session
    * @returns result of the crawling in current session
    */
   async crawl(e, input) {
@@ -161,14 +168,7 @@ class SmartCrawlerClass {
           });
         }
 
-        /* add parsed cookies to result
-        if(parsedResult.cookies !== null){
-          parsedResult.cookies.forEach(cookie => {
-            input.results.initialCookies[cookie.name] = cookie.value;
-          });
-        } */
-
-        // Fetch url with DNT Header
+        // Fetch url with DNT/GPC Header
         let DNT_obj = await this.fetchDNT(url, maxRedirects);
 
         if (DNT_obj !== undefined) {
@@ -259,10 +259,6 @@ class SmartCrawlerClass {
    * @returns tracking cookies
    */
   compareCookies(DNT_obj, parsedResult) {
-    /* if (DNT_obj == undefined) {
-      console.log("DNT object is undefined");
-      return;
-    } */
     let tracking = {};
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
@@ -293,14 +289,11 @@ class SmartCrawlerClass {
 
   /**
    * Check if website sets cookies
-   * @param {*} headers - headers of downloaded website
+   * 
+   * @param {*} headers headers of downloaded website
    * @returns Array of with initial Cookies set by the website
    */
   checkCookies(headers) {
-    /* if (headers == undefined) {
-      return;
-    } */
-
     // init result object
     const result = {
       persistentCookies: {},
@@ -344,9 +337,10 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Extract urls from the tags & sort them.
-   * @param {*} urls - tags & attributes with urls to be extracted
-   * @param {*} attribute - base attribute used for slicing e.g. script src=
+   * Extract urls from the tags and sorts them
+   * 
+   * @param {*} urls  tags & attributes with urls to be extracted
+   * @param {*} attribute  base attribute used for slicing e.g. script src=
    * @returns object with extracted internal & external urls.
    */
   extractUrls(urls, attribute) {
@@ -369,7 +363,8 @@ class SmartCrawlerClass {
 
   /**
    * Parse links to external sites from body of website
-   * @param {*} body - body of website
+   * 
+   * @param {*} body body of website
    * @returns array of links to external sites
    */
   parseLinks(body) {
@@ -406,8 +401,9 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Parse the downloaded website for privacy relevant data.
-   * @param {*} result - downloaded website
+   * Parse the downloaded website for privacy relevant data
+   * 
+   * @param {*} result downloaded website
    * @returns downloaded website and extracted privacy data of the website
    */
   async parse(result) {
@@ -429,8 +425,9 @@ class SmartCrawlerClass {
   }
 
   /**
-   * Download a webpage.
-   * @param {string} url - The URL to download.
+   * Download a webpage
+   * 
+   * @param {string} url The URL to download.
    * @returns {Promise} A promise object with status, headers and content.
    */
   fetch(url, status) {
@@ -438,6 +435,7 @@ class SmartCrawlerClass {
       console.log('...getting');
       var hostname = new URL(url).hostname;
 
+      // Get requests from Requests class
       var DNT_options = Requests.DNT_options;
       DNT_options.hostname = hostname;
       var GPC_options = Requests.GPC_options;

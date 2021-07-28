@@ -1,29 +1,31 @@
 const { app, dialog, Menu, shell, Main, BrowserWindow } = require('electron');
 
-/** Top menu for the application window. */
-class SmartCrawlerMenuClass
-{
-  /** Creates a new top menu template depending on the platform the app is being run on.  */
-  constructor()
-  {
+/** 
+ * Top menu for the application window 
+ */
+class SmartCrawlerMenuClass {
+  /** 
+   * Creates a new top menu template depending on the platform the app is being run on  
+   */
+  constructor() {
     const de = app.getLocale().toLocaleLowerCase().startsWith('de');
     const isMac = process.platform === 'darwin';
     this.template = [
       ...(isMac ? [{
-          label: app.name,
-          submenu: [
-            { role: 'hide' },
-            { role: 'hideothers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
-          ]
+        label: app.name,
+        submenu: [
+          { role: 'hide' },
+          { role: 'hideothers' },
+          { role: 'unhide' },
+          { type: 'separator' },
+          { role: 'quit' }
+        ]
       }] : []),
       {
         label: de ? 'Datei' : 'File',
         submenu: [
           isMac ? { role: 'close' } : { role: 'quit' },
-          { label: 'DevConsole', accelerator: 'F12', role: 'toggleDevTools'}
+          { label: 'DevConsole', accelerator: 'F12', role: 'toggleDevTools' }
         ]
       },
       {
@@ -41,23 +43,25 @@ class SmartCrawlerMenuClass
           { role: 'minimize' },
           { role: 'zoom' },
           ...(isMac ? [
-              { type: 'separator' },
-              { role: 'front' },
-              { type: 'separator' },
-              { role: 'window' }
+            { type: 'separator' },
+            { role: 'front' },
+            { type: 'separator' },
+            { role: 'window' }
           ] : [
-                { role: 'close' }
-              ])
+            { role: 'close' }
+          ])
         ]
       }
     ];
   }
 
-  /** Initializes & sets the top menu of the application.  */
+  /** 
+   * Initializes & sets the top menu of the application 
+   */
   set() {
     const menu = Menu.buildFromTemplate(this.template);
     Menu.setApplicationMenu(menu);
   }
 }
 
-exports.SmartCrawlerMenu = new SmartCrawlerMenuClass(); 
+exports.SmartCrawlerMenu = new SmartCrawlerMenuClass();
