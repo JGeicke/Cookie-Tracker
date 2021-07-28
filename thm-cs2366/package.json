@@ -18,6 +18,16 @@
     "email": "info@tobias-reimann.com",
     "url": "https://www.tobias-reimann.com"
   },
+  "contributors": [
+    {
+      "name" : "Leon George",
+      "email" : "leon.george@mni.thm.de"
+    },
+    {
+      "name" : "Jan Geicke",
+      "email" : "jan.geicke@mni.thm.de"
+    }
+  ],
   "devDependencies": {
     "electron": "^11.4.2",
     "electron-packager": "^15.3.0"
