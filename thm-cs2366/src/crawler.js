@@ -237,10 +237,12 @@ class SmartCrawlerClass {
       console.log('..fetching redirect ' + url);
       download = await this.fetch(url, true);
     }
-    let cookies = this.checkCookies(download.headers);
-    //console.log("DNT cookies: " + JSON.stringify(cookies));
-    if (cookies == undefined) {
+
+    let cookies;
+    if (download.headers == undefined) {
       return;
+    } else {
+      cookies = this.checkCookies(download.headers);
     }
     return {
       persistentCookies: cookies.persistentCookies,
@@ -257,10 +259,10 @@ class SmartCrawlerClass {
    * @returns tracking cookies
    */
   compareCookies(DNT_obj, parsedResult) {
-    if (DNT_obj == undefined) {
+    /* if (DNT_obj == undefined) {
       console.log("DNT object is undefined");
       return;
-    }
+    } */
     let tracking = {};
     console.log("LENGTH: " + Object.keys(DNT_obj).length);
     if (Object.keys(DNT_obj.persistentCookies).length === Object.keys(parsedResult.persistentCookies).length &&
@@ -295,9 +297,9 @@ class SmartCrawlerClass {
    * @returns Array of with initial Cookies set by the website
    */
   checkCookies(headers) {
-    if (headers == undefined) {
+    /* if (headers == undefined) {
       return;
-    }
+    } */
 
     // init result object
     const result = {
@@ -308,7 +310,7 @@ class SmartCrawlerClass {
 
     // return if no set-cookie header present
     let cookies = [];
-    if (!'set-cookie' in headers && headers['set-cookie'] === undefined) {
+    if (headers['set-cookie'] === undefined) {
       return result;
     }
     let cookieHeader = String(headers['set-cookie']);

@@ -483,7 +483,7 @@ class WelcomePage extends Component {
               <div class="input-group-prepend text-center">
                 <div class="input-group-text">URL</div>
               </div>
-              <input type="text"  class="form-control" id="inlineFormInputGroup" placeholder="URL e.g. https://www.example.com" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>
+              <input type="text"  class="form-control" id="inlineFormInputGroup" placeholder="e.g. https://www.example.com" value=${this.state.input} onInput=${this.onInput} onkeyup=${this.onKeyUp}/>
             </div>
           </div>
           <div class="col-sm-2 text-center"></div>
