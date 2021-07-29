@@ -38,11 +38,9 @@ class WelcomePage extends Component {
     this.saveJsonResult = this.saveJsonResult.bind(this);
     this.settingsClicked = this.settingsClicked.bind(this);
     this.detailsClicked = this.detailsClicked.bind(this);
-    this.toggleLog = this.toggleLog.bind(this);
     this.resultReceived = this.resultReceived.bind(this)
     this.showCrawlView = this.showCrawlView.bind(this);
     this.changeChart = this.changeChart.bind(this);
-    //this.setSettings = this.setSettings.bind(this);
 
     ipcRenderer.on('htmlReceived', this.htmlReceived);
     ipcRenderer.on('resultReceived', this.resultReceived);
@@ -223,13 +221,6 @@ class WelcomePage extends Component {
   changeChart() {
     let key = document.getElementById('domainSelection').value;
     this.updateChart(this.result, key);
-  }
-
-  /**
-   * Workaround to toggle the url log
-   */
-  toggleLog() {
-    this.test = !this.test;
   }
 
   /**
