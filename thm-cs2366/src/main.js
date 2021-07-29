@@ -3,6 +3,7 @@ const path = require('path');
 const { SmartCrawlerMenu } = require('./menu.js');
 const { SmartCrawler } = require('./crawler.js');
 const Session = require('./session.js');
+const jetpack = require('fs-jetpack');
 
 /** 
  * Main class to initialize the window & control the flow of the application 
@@ -19,6 +20,140 @@ class Main {
     ipcMain.handle('detailsButtonClicked', this.onDetailsButtonClicked);
     ipcMain.handle('saveButtonClicked', this.onSaveButtonClicked);
     this.session = null;
+
+    this.loadSettings();
+  }
+
+  /**
+   * Load settings if config file is present
+   */
+  loadSettings(){
+    let result = {};
+    // check if config file exists
+    if(jetpack.exists('settings.ini')){
+      try{
+        // load settings.ini
+        let settings = jetpack.read('settings.ini');
+        // split settings string
+        const pairs = settings.split('\n');
+        pairs.forEach((pair) => {
+          if(!pair.startsWith('#')){
+            pair = pair.trim();
+            // check if pair is empty
+            if(pair.length > 0){
+              // split key value pair
+              let keyValue = pair.split('=');
+
+              // parse key value pair
+              if(keyValue[0]==='USER-AGENT'){
+                // parse user agent settings
+                switch(keyValue[1]){
+                  case '/':
+                    result['Generic']=true;
+                    result['Special']=false;
+                    break;
+                  default:
+                    result['Generic']=false;
+                    result['Special']=true;
+                    result['custom_ua']=keyValue[1];
+                    break;
+                }
+              }else if(keyValue[0]==='HEADER'){
+                // parse header settings
+                switch(keyValue[1]){
+                  case '0':
+                    result['DNT']=true;
+                    result['GPC']=false;
+                    break;
+                  case '1':
+                    result['DNT']=false;
+                    result['GPC']=true;
+                    break;
+                  default:
+                    console.error('unknown header value!');
+                    return;
+                }
+              }else if(keyValue[0]==='MODE'){
+                // parse mode settings
+                switch(keyValue[1]){
+                  case '0':
+                    result['Breadth']=true;
+                    result['Single']=false;
+                    break;
+                  case '1':
+                    result['Breadth']=false;
+                    result['Single']=true;
+                    break;
+                  default:
+                    console.error('unknown mode value!');
+                    return;
+                }
+              }else{
+                console.error('unknown key for settings!');
+              }
+            }
+          }
+        });
+        SmartCrawler.setSettings(result);
+      }catch(err){
+        console.error(err);
+      }
+    }
+  }
+
+  /**
+   * Saves the settings in config file.
+   * @param {*} ua_generic Generic user agent
+   * @param {*} custom_ua The custom user agent string
+   * @param {*} isDNT Do Not Track Header
+   * @param {*} isBreadth Breadth search
+   */
+  static saveSettings(ua_generic, custom_ua, isDNT, isBreadth){
+    // construct string to write
+    let settingsToWrite = '';
+
+    // add comments
+    settingsToWrite = '# user agent used for request\n# / - Standard User Agent, else Cookie Tracker uses the supplied user agent.\n'
+
+    // user agent
+    if(ua_generic){
+      //add generic user agent
+      settingsToWrite = settingsToWrite + 'USER-AGENT=/';
+    } else {
+      //add custom user agent
+      settingsToWrite = settingsToWrite + 'USER-AGENT=' + custom_ua;
+    }
+
+    // add comments
+    settingsToWrite = settingsToWrite + '\n# header to use for tracking cookies\n# 0 = DNT-Header\n# 1 = GPC-Header\n';
+
+    // header
+    if(isDNT){
+      //add dnt header
+      settingsToWrite = settingsToWrite + 'HEADER=0';
+    } else {
+      //add gpc header
+      settingsToWrite = settingsToWrite + 'HEADER=1';
+    }
+
+    // add comments
+    settingsToWrite = settingsToWrite + '\n# crawler mode\n# 0 = breadth search - cookie tracker searches for external links, follows them and analyzes the website.\n# 1 = single page - cookie tracker just follows the supplied urls and analyzes the website. After the analysis was completed, cookie tracker stops.\n';
+
+    // crawler mode
+    if(isBreadth){
+      //add breadth mode
+      settingsToWrite = settingsToWrite + 'MODE=0';
+    } else {
+      //add single page mode
+      settingsToWrite = settingsToWrite + 'MODE=1';
+    }
+
+    // write in config file
+    try{
+      jetpack.writeAsync('settings.ini', settingsToWrite, {mode: '700'});
+    } catch(err){
+      console.error(err);
+    }
   }
 
   /**
@@ -193,6 +328,9 @@ class Main {
     SmartCrawler.isGPC = isGPC;
     SmartCrawler.isBreadth = isBreadth;
     SmartCrawler.isSingle = isSingle;
+
+    // save settings in config file
+    Main.saveSettings(ua_generic, custom_ua, isDNT, isBreadth);
     // Close window on save button click
     BrowserWindow.getFocusedWindow().close();
   }

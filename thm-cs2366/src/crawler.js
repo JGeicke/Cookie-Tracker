@@ -66,6 +66,24 @@ class SmartCrawlerClass {
   }
 
   /**
+   * Set the settings after loading the config file
+   * @param settings - parsed settings from config file
+   */
+  setSettings(settings){
+    this.isUaGeneric=settings.Generic;
+    this.isUaSpecial=settings.Special;
+    this.isDNT=settings.DNT;
+    this.isGPC=settings.GPC;
+    this.isBreadth=settings.Breadth;
+    this.isSingle=settings.Single;
+
+    if(this.isUaSpecial){
+      this.custom_ua = settings.custom_ua;
+    }
+
+  }
+
+  /**
    * Checks if the url is a sub site of the domain
    * 
    * @param {*} url url to check
