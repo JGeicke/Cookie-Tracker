@@ -4,3 +4,4 @@ node_modules/
 package-lock.json
 *.code-workspace
 dist/
+settings.ini
