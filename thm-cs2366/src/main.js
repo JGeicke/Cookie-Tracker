@@ -37,9 +37,7 @@ class Main {
         // split settings string
         const pairs = settings.split('\n');
         pairs.forEach((pair) => {
-          if(pair.startsWith('#')){
-            console.log('Comment!');
-          } else {
+          if(!pair.startsWith('#')){
             pair = pair.trim();
             // check if pair is empty
             if(pair.length > 0){
@@ -97,7 +95,6 @@ class Main {
           }
         });
         SmartCrawler.setSettings(result);
-        console.log(result);
       }catch(err){
         console.error(err);
       }
