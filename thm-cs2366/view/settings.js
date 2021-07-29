@@ -19,8 +19,8 @@ class SettingsPage extends Component {
   /**
    * Sets the checkboxes according to previous settings
    * 
-   * @param {*} e Reference to the event
-   * @param {*} settings The settings object with all settings
+   * @param {*} e reference to the event
+   * @param {*} settings the settings object with all settings
    */
   setCheckboxes(e, settings) {
     document.getElementById('user_generic').checked = settings.Generic;

@@ -316,7 +316,7 @@ class DetailsPage extends Component {
         `;
   }
 
-  /** close window*/
+  /** close window */
   closeWindow() {
     let window = remote.getCurrentWindow();
     window.close();

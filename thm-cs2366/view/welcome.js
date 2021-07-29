@@ -128,7 +128,7 @@ class WelcomePage extends Component {
   }
 
   /**
-   * Change view to the standard crawler view.
+   * Change view to the standard crawler view
    */
   showCrawlView() {
     // reset content
@@ -218,7 +218,7 @@ class WelcomePage extends Component {
   }
 
   /**
-   * Change and update the chart to display the results of the selected domain.
+   * Change and update the chart to display the results of the selected domain
    */
   changeChart() {
     let key = document.getElementById('domainSelection').value;
@@ -226,14 +226,15 @@ class WelcomePage extends Component {
   }
 
   /**
-   * Workaround to toggle the url log.
+   * Workaround to toggle the url log
    */
   toggleLog() {
     this.test = !this.test;
   }
 
-  /**Event handler to handle the "htmlReceived" event.
-   * Sets the html state to be rendered.
+  /**
+   * Event handler to handle the "htmlReceived" event
+   * Sets the html state to be rendered
    */
   htmlReceived(event, data) {
     let output = this.state.html;
@@ -244,7 +245,7 @@ class WelcomePage extends Component {
     });
   }
 
-  /**Event handler to handle the "onkeyup" event.*/
+  /** Event handler to handle the "onkeyup" event */
   onKeyUp(event) {
     // keycode: 13='Enter' 
     if (event.keyCode === 13) {
@@ -255,14 +256,14 @@ class WelcomePage extends Component {
     }
   }
 
-  /**Event handler to handle the "onInput" event for url input field. */
+  /** Event handler to handle the "onInput" event for url input field */
   onInput(event) {
     this.setState({
       input: event.target.value
     });
   }
 
-  /**Event handler to handle the "onStarted" event when the crawler was started. */
+  /** Event handler to handle the "onStarted" event when the crawler was started */
   onStarted(event) {
 
     // render spinner
@@ -416,7 +417,7 @@ class WelcomePage extends Component {
   }
 
   /** 
-   * Settings button handler
+   * Details button handler
    */
   detailsClicked() {
     // domain key to display the details for

@@ -50,7 +50,7 @@ class Session {
   /**
    * Create a new session object
    * 
-   * @param {*} url First url to add to session
+   * @param {*} url first url to add to session
    * @returns new session object
    */
   createSession(url) {

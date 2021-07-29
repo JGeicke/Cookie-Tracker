@@ -3,11 +3,12 @@ const cookieParser = require('set-cookie-parser');
 const { DomainResult } = require("./domainResult");
 const Requests = require('./requests.js');
 
-/** Class used to implement the crawlers functionality.*/
+/** 
+ * Class used to implement the crawlers functionality
+ */
 class SmartCrawlerClass {
   /** minimum external links needed to continue*/
   MIN_EXTERNALS = 2;
-
   /** current session */
   currentSession;
   /** If the crawler should interrupt the crawling */
@@ -20,7 +21,7 @@ class SmartCrawlerClass {
   isUaGeneric = true;
   /** Special user agent is used */
   isUaSpecial = false;
-  /** Custom user agen string */
+  /** Custom user agent string */
   custom_ua;
   /** Check if DNT Header should be used */
   isDNT = true;
@@ -32,14 +33,14 @@ class SmartCrawlerClass {
   isSingle = false;
 
   /**
-   * Create a crawler.
+   * Create a crawler
    */
   constructor() {
     this.currentSession = null;
   }
 
   /**
-   * Abort current session if the crawler is crawling.
+   * Abort current session if the crawler is crawling
    */
   abortSession() {
     if (this.isRunning) {
@@ -274,7 +275,7 @@ class SmartCrawlerClass {
    * Check if website sets cookies
    * 
    * @param {*} headers headers of downloaded website
-   * @returns Array of with initial Cookies set by the website
+   * @returns array of with initial Cookies set by the website
    */
   checkCookies(headers) {
     // init result object
@@ -410,8 +411,8 @@ class SmartCrawlerClass {
   /**
    * Download a webpage
    * 
-   * @param {string} url The URL to download.
-   * @returns {Promise} A promise object with status, headers and content.
+   * @param {string} url the URL to download
+   * @returns {Promise} a promise object with status, headers and content
    */
   fetch(url, status) {
     return new Promise((resolve, reject) => {

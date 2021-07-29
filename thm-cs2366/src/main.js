@@ -176,14 +176,14 @@ class Main {
   /**
    * Sets the values given in the settings page
    *
-   * @param {*} e Reference to the event
-   * @param {*} ua_generic Generic user agent
-   * @param {*} ua_special Special user agent
-   * @param {*} custom_ua The custom user agent string
+   * @param {*} e reference to the event
+   * @param {*} ua_generic generic user agent
+   * @param {*} ua_special special user agent
+   * @param {*} custom_ua the custom user agent string
    * @param {*} isDNT Do Not Track Header
    * @param {*} isGPC GPC Header
-   * @param {*} isBreadth Breadth search
-   * @param {*} isSingle Single page search
+   * @param {*} isBreadth breadth search
+   * @param {*} isSingle single page search
    */
   onSaveButtonClicked(e, ua_generic, ua_special, custom_ua, isDNT, isGPC, isBreadth, isSingle) {
     SmartCrawler.isUaGeneric = ua_generic;
