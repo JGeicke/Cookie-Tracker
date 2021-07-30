@@ -4,7 +4,7 @@ Beim Cookie Tracker handelt es sich um eine Software zur Analyse von Webseiten b
 
 ## Installation
 ### Windows
-Der Cookie Tracker kann über die entsprechende Cookie Tracker Executable (Cookie Tracker.exe) gestartet werden. Eine Installation ist nicht notwendig.
+Um den Cookie Tracker auf Windows zu starten, kann über die Releases die ensprechende Windows zip Datei heruntergeladen werden. Der Cookie Tracker kann dann über die entsprechende Cookie Tracker Executable (Cookie Tracker.exe) gestartet werden. Eine Installation ist nicht notwendig.
 
 ### MacOS
 Um den Cookie Tracker auf Mac zu starten, kann über die Releases die darwin tar Datei heruntergeladen werden. Dort kann dann nach Entpacken der Datei, die App normal gestartet werden.
@@ -16,21 +16,22 @@ Linux wird aktuell nicht unterstützt.
 
 ## Bedienung
 Nach Starten des Cookie Trackers gelangt man zunächst zur Hauptansicht.
-Der Nutzer hat dabei die Möglichkeit eine bestehende Session zu laden oder eine neue Session mit einer URL zu beginnen.
+Der Nutzer hat dort die Möglichkeit eine bestehende Session zu laden oder eine neue Session mit einer URL zu beginnen.
 
 
 Im Settings-Fenster kann der Nutzer das Verhalten des Cookie Tracker entsprechend anpassen.
 
-Beim Starten des Vorgangs untersucht Cookie Tracker die ausstehenden URLs nach Cookies. Bereits untersuchte URLs werden im Log
-für den Nutzer ausgegeben. Sollte der Vorgang unterbrochen werden oder der Cookie Tracker hat keine weiteren URLs, denen er folgen kann,
-gelangt der Nutzer zur Darstellung der Ergebnisse mit Hilfe von Charts.
+Beim Starten des Vorgangs untersucht der Cookie Tracker die ausstehenden URLs nach Cookies und prüft, wie die Website entsprechende Header (DNT/GPC) umsetzt. Bereits untersuchte URLs werden im Log
+für den Nutzer ausgegeben. Sollte der Vorgang unterbrochen werden oder der Cookie Tracker keine weiteren URLs haben, denen er folgen kann,
+gelangt der Nutzer zur Darstellung der Ergebnisse durch Diagramme.
 
-Zunächst werden dem Nutzer die Ergebnisse von allen untersuchten URLs präsentiert. Der Nutzer kann sich die Ergebnisse
-von einzelne URLs darstellen lassen. Mit Hilfe des Dropdown-Menüs kann die Ergebnisse von allen bzw. einzelnen Domains detailliert
-dargestellt bekommen.
+Zunächst werden dem Nutzer die Ergebnisse von allen untersuchten URLs als Diagramm präsentiert. Der Nutzer kann sich jedoch auch die Ergebnisse
+von einzelne Domains darstellen lassen. Mit Hilfe des Dropdown-Menüs kann der Nutzer einzelne Domains auswählen, wodurch die Ergebnisse detailliert in einem extra Fenster dargestellt werden.
 
 Abgeschlossene oder pausierte Sessions lassen sich nach Belieben speichern und zu einem späteren Zeitpunkt fortsetzen. 
 Auch eine pausierte bzw. gestoppte Session kann nach der Darstellung der Zwischenergebnisse weitergeführt werden.
+
+Will der Nutzer eine neue Session beginnen, aber hat bereits eine Session gestartet gehabt, muss nach dem aktuellen Stand der Cookie Tracker neu gestartet werden.
 
 ## Einstellungen
 ### User Agent
