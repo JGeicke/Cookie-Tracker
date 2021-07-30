@@ -8,6 +8,7 @@ Der Cookie Tracker kann über die entsprechende Cookie Tracker Executable (Cooki
 
 ### MacOS
 Um den Cookie Tracker auf Mac zu starten, kann über die Releases die darwin tar Datei heruntergeladen werden. Dort kann dann nach Entpacken der Datei, die App normal gestartet werden.
+
 Achtung! Es wird wahrscheinich notwendig sein, der App Erlaubnis zu geben zu starten. Das kann in den Einstellungen auf dem Mac unter "Sicherheit" freigegeben werden.
 
 ### Linux
